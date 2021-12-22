@@ -1,7 +1,7 @@
 // 刚刚封装的axios
 import request from "./axios";
 
-import axios from "axios";
+import qs from "qs";
 
 // // 1.获取图片验证码
 // export const getImgCode = () => {
@@ -45,5 +45,29 @@ export const getCompleteWords = data => {
     url: "/word/getCompleteWordsByUserId",
     method: "get",
     params: data
+  });
+};
+
+// form请求格式;
+
+// return request({
+//   // 表单数据加这个请求头
+//   headers: {
+//     "Content-Type": "application/x-www-form-urlencoded"
+//   },
+//   url: "admin/user/login",
+//   method: "post",
+//   data: qs.stringify(data) //用 qs 将js对象转换为字符串
+// });
+
+export const login = data => {
+  return request({
+    // 表单数据加这个请求头
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    url: "admin/user/login",
+    method: "post",
+    data: qs.stringify(data) //用 qs 将js对象转换为字符串
   });
 };

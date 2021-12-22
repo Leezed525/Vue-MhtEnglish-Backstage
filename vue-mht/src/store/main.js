@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 //存取数据的位置
 const state = {
-  // token: ""
+  token: ""
 };
 
 //用来处理异步请求

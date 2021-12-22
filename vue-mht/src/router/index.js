@@ -1,7 +1,9 @@
 import Vue from "vue";
 import Router from "vue-router";
-import HelloWorld from "@/components/HelloWorld";
+import store from "../store/main";
+
 import Login from "@/views/Login";
+import Index from "@/views/Index";
 
 Vue.use(Router);
 
@@ -9,9 +11,11 @@ const router = new Router({
   routes: [
     {
       path: "/",
+      name: "Index",
       meta: {
         requireAuth: true
-      }
+      },
+      component: Index
     },
     {
       path: "/login",
@@ -21,7 +25,6 @@ const router = new Router({
   ]
 });
 
-//全局路由首位
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     //判断该路由是否需要登陆权限
