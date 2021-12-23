@@ -25,7 +25,6 @@ const actions = {
 //写入state
 const mutations = {
   SETTOKEN(state, token) {
-    window.localStorage.setItem("mhtToken", token);
     state.token = token;
   }
 };
