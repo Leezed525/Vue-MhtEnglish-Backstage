@@ -40,7 +40,7 @@ import qs from "qs";
 //   });
 // };
 
-export const getCompleteWords = data => {
+const getCompleteWords = data => {
   return request({
     url: "/word/getCompleteWordsByUserId",
     method: "get",
@@ -55,19 +55,40 @@ export const getCompleteWords = data => {
 //   headers: {
 //     "Content-Type": "application/x-www-form-urlencoded"
 //   },
-//   url: "admin/user/login",
+//   url: "admin/system/login",
 //   method: "post",
 //   data: qs.stringify(data) //用 qs 将js对象转换为字符串
 // });
 
-export const login = data => {
+// json请求格式
+// return request({
+//   url: "admin/system/login",
+//   method: "post",
+//   data: data
+// });
+
+const login = data => {
   return request({
     // 表单数据加这个请求头
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     },
-    url: "admin/user/login",
+    url: "admin/system/login",
     method: "post",
     data: qs.stringify(data) //用 qs 将js对象转换为字符串
   });
 };
+
+const getAdminUserInfoByUsername = data => {
+  return request({
+    url: "admin/user/getAdminUserInfoByUsername",
+    method: "get",
+    data
+  });
+};
+
+var userApi = {
+  login,
+  getAdminUserInfoByUsername
+};
+export default userApi;

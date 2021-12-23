@@ -11,7 +11,7 @@
             
             <el-form-item prop="password">
                 <el-input type="password" v-model="loginForm.password"
-                    auto-complete="off" placeholder="密码"></el-input>
+                    auto-complete="off" placeholder="密码" @keydown.enter.native="toLogin"></el-input>
             </el-form-item>
 
             <el-checkbox class="login_remember" v-model="loginForm.checked"
@@ -27,11 +27,7 @@
     </body>
 </template>
 <script>
-import { getCompleteWords ,login } from "@/request/userApi";
-
-let api ={}
-api.getCompleteWords = getCompleteWords
-api.login = login
+import userApi from "@/request/userApi";
 
 export default {
     name:'Login',
@@ -46,25 +42,48 @@ export default {
         }
     },
     methods: {
-        CompleteWords(){
-            let data = {
-                user_id:25,
-                query : "",
-            }
-            getCompleteWords(data).then(res => {
-                console.log(res);
-            })
-        },
         toLogin(){
             let _this = this
+            _this.loading = true
             let data = {
                 username:_this.loginForm.username,
-                password:_this.loginForm.password
+                password:_this.$MD5(_this.loginForm.password.trim()),
             }
-            api.login(data).then(res => {
-                 console.log(res)
+            console.log(data)
+            userApi.login(data).then(res => {
+                let result = res.data
+                if(result.code == 200){
+                    _this.$store.dispatch("getUserInfoByUsername",_this.loginForm.username);
+                    _this.$message({
+                        type:"success",
+                        message: result.msg,
+                        center:true,
+                        duration:500,
+                        onClose:function(){
+                            console.log("跳转")
+                            let token = result.data
+                            //首先将token 存到vuex中
+                            _this.$store.dispatch("setToken",token)
+                            _this.$router.replace("/")
+                        }
+                    })
+                } else {
+                    _this.$message({
+                        typre:"error",
+                        message:result.msg,
+                        center:true,
+                        duration:500,
+                        onClose:function(){
+                            _this.loading = false
+                            _this.loginForm.password = ""
+                        }
+                    })
+                }
+                
+                
+
             })
-        }
+        },
     },
     mounted() {
 

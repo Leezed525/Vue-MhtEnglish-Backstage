@@ -29,50 +29,6 @@ service.interceptors.request.use(
   }
 );
 
-// response 拦截器
-// service.interceptors.response.use(
-//   response => {
-//     if (response.config.responseType == "blob") {
-//       if (response.status == 200) {
-//         return response;
-//       } else {
-//         return Promise.reject(error);
-//       }
-//     } else {
-//       const res = response.data;
-//       if (res.code === 200) {
-//         return response.data;
-//       } else if (res.code === 407) {
-//         // console.log("Token失效跳转登陆页面");
-//         // sessionStorage.clear();
-//         // location.href="/ecloud-sp/logout";
-//       } else {
-//         Message({
-//           message: res.message,
-//           type: "error",
-//           duration: 5 * 1000
-//         });
-//         return Promise.reject("error");
-//       }
-//     }
-//   },
-//   error => {
-//     console.log("err" + error); // for debug
-
-//     // if (axios.isCancel(error)) {
-//     //   // 为了终结promise链 就是实际请求 不会走到.catch(rej=>{});这样就不会触发错误提示之类了。
-//     //   return new Promise(() => {});
-//     // } else {
-//     Message({
-//       message: error.message,
-//       type: "error",
-//       duration: 5 * 1000
-//     });
-//     return Promise.reject(error);
-//     // }
-//   }
-// );
-
 // http response 拦截器
 service.interceptors.response.use(
   response => {
