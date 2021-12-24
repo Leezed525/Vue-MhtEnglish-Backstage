@@ -83,7 +83,7 @@ const getAdminUserInfoByUsername = data => {
   return request({
     url: "admin/user/getAdminUserInfoByUsername",
     method: "get",
-    data
+    params: data
   });
 };
 

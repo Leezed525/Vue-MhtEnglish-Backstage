@@ -13,13 +13,15 @@ Vue.use(ElementUI);
 import store from "./store/main";
 // 引入md5加密
 import md5 from "js-md5";
-
+//引入base64
+const Base64 = require('js-base64').Base64
 //关闭生产提示
 Vue.config.productionTip = false;
 
 // 把md5放入vue的原型方便调用
 Vue.prototype.$MD5 = md5;
-
+// 把base64放入vue的原型方便调用
+Vue.prototype.$BASE64 = Base64;
 /* eslint-disable no-new */
 new Vue({
   el: "#app",

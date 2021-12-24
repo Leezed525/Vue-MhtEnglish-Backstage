@@ -17,7 +17,8 @@ service.interceptors.request.use(
     // let url = config.url.replace(config.baseURL, "");
     // let code = config.code;
     // config.headers = getHeader(url, code); // 让每个请求携带自定义签名
-    if (store.state.token) {
+    let token = store.state.token.trim();
+    if (token != null && token != "") {
       // 判断是否存在token，如果存在的话，则每个http header都加上token
       config.headers.Authorization = `token ${store.state.token}`;
     }

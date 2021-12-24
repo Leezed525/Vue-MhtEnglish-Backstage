@@ -9,7 +9,10 @@ Vue.use(Vuex);
 const state = {
   token: localStorage.getItem("mhtToken")
     ? localStorage.getItem("mhtToken")
-    : ""
+    : "",
+  userInfo : localStorage.getItem("mhtUserInfo")
+  ? localStorage.getItem("mhtUserInfo")
+  : ""
 };
 
 //用来处理异步请求
@@ -18,7 +21,20 @@ const actions = {
     context.commit("SETTOKEN", token);
   },
   getUserInfoByUsername(context, username) {
-    console.log(username);
+    let data = {
+      username
+    };
+    let userInfo;
+    userApi
+      .getAdminUserInfoByUsername(data)
+      .then(res => {
+        //获取用户信息
+        userInfo = res.data;
+        context.commit("SETUSERINFO", userInfo);
+      })
+      .catch(error => {
+        alert("服务器错误");
+      });
   }
 };
 
@@ -26,6 +42,9 @@ const actions = {
 const mutations = {
   SETTOKEN(state, token) {
     state.token = token;
+  },
+  SETUSERINFO(state,userInfo){
+    state.userInfo = userInfo;
   }
 };
 
