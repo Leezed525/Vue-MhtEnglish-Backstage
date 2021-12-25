@@ -3,6 +3,8 @@
 import Vue from "vue";
 import App from "./App";
 import router from "./router";
+//清除默认样式
+import "./assets/style/resrt.css";
 
 // 引入elementui
 import ElementUI from "element-ui";
@@ -14,7 +16,7 @@ import store from "./store/main";
 // 引入md5加密
 import md5 from "js-md5";
 //引入base64
-const Base64 = require('js-base64').Base64
+const Base64 = require("js-base64").Base64;
 //关闭生产提示
 Vue.config.productionTip = false;
 

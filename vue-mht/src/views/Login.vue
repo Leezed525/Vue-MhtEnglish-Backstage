@@ -77,7 +77,7 @@ export default {
             let autoLogin = _this.loginForm.autoLogin
             let data = {
                 username:_this.loginForm.username,
-                password:_this.$MD5(_this.loginForm.password.trim()),
+                password:_this.loginForm.password.trim(),
             }
             console.log(data)
             userApi.login(data).then(res => {
@@ -120,6 +120,17 @@ export default {
                         }
                     })
                 }
+            }).catch(err => {
+                console.log(err)
+                _this.$message({
+                    typre:"error",
+                    message:"网络错误",
+                    center:true,
+                    duration:500,
+                    onClose:function(){
+                        _this.loading = false
+                    }
+                })
             })
         },
 

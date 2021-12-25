@@ -4,18 +4,38 @@ import store from "../store/main";
 
 import Login from "@/views/Login";
 import Index from "@/views/Index";
+import Main from "@/views/Main";
+import AdminUser from "@/views/AdminUser";
 
 Vue.use(Router);
+
+const originalPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 
 const router = new Router({
   routes: [
     {
       path: "/",
       name: "Index",
+      component: Index,
+      redirect: "adminuser",
       meta: {
         requireAuth: true
       },
-      component: Index
+      children: [
+        {
+          path: "main",
+          name: "Main",
+          component: Main
+        },
+        {
+          path: "adminuser",
+          name: "AdminUser",
+          component: AdminUser
+        }
+      ]
     },
     {
       path: "/login",
