@@ -87,8 +87,21 @@ const getAdminUserInfoByUsername = data => {
   });
 };
 
+const getAllAdminUser = data => {
+  return request({
+    // 表单数据加这个请求头
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    url: "admin/user/getAllAdminUser",
+    method: "post",
+    data: qs.stringify(data) //用 qs 将js对象转换为字符串
+  });
+};
+
 var userApi = {
   login,
-  getAdminUserInfoByUsername
+  getAdminUserInfoByUsername,
+  getAllAdminUser
 };
 export default userApi;

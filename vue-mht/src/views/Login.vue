@@ -35,7 +35,7 @@
 // 引入base64加密
 
 
-import userApi from "@/request/userApi";
+import adminUserApi from "@/request/adminUserApi";
 
 export default {
     name:'Login',
@@ -80,7 +80,7 @@ export default {
                 password:_this.loginForm.password.trim(),
             }
             console.log(data)
-            userApi.login(data).then(res => {
+            adminUserApi.login(data).then(res => {
                 let result = res.data
                 if(result.code == 200){
                     this.saveFormInfo()

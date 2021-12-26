@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import userApi from "../request/userApi";
+import userApi from "../request/adminUserApi";
 
 Vue.use(Vuex);
 

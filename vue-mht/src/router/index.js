@@ -28,12 +28,18 @@ const router = new Router({
         {
           path: "main",
           name: "Main",
-          component: Main
+          component: Main,
+          meta: {
+            requireAuth: true
+          }
         },
         {
           path: "adminuser",
           name: "AdminUser",
-          component: AdminUser
+          component: AdminUser,
+          meta: {
+            requireAuth: true
+          }
         }
       ]
     },

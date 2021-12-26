@@ -11,18 +11,21 @@
                         <div class="content-tab">
                             <el-tabs v-model="activeIndex" type="border-card" closable v-if="openTab.length" @tab-click='tabClick' @tab-remove='tabRemove'>
                                 <el-tab-pane :key="item.name" v-for="(item, index) in openTab" :label="item.name" :name="item.route">
+                                    <div class="content-wrap">
+                                        <router-view />
+                                    </div>
                                 </el-tab-pane>
                             </el-tabs>
                         </div>
-                        <div class="content-wrap">
-                            <router-view />
-                        </div>
+
                     </div>
 
                 </el-main>
             </el-container>
 
-            <el-footer></el-footer>
+            <el-footer>
+                footer
+            </el-footer>
         </el-container>
     </div>
 </template>
@@ -155,7 +158,6 @@ export default {
 }
 .el-tabs.el-tabs--border-card {
     box-shadow: none;
-    border-bottom: none;
 }
 .el-header,
 .el-footer {

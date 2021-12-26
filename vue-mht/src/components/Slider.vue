@@ -4,7 +4,6 @@
             <i class="el-icon-menu"></i>
             <span slot="title">首页</span>
         </el-menu-item>
-
         <el-submenu v-for="(item,index) in menuList" :key="index" :index='item.id'>
             <template slot="title">
                 <i :class="item.icon"></i>

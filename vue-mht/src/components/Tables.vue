@@ -1,38 +1,77 @@
 <template>
-    <el-card>
-        <el-table :data="tableList" style="width: 100%">
-            <el-table-column type="index" align="center" label="序号" width="50">
-                <template slot-scope="scope">
-                    <span>{{scope.$index+1+(currentPage-1)*limit}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column v-for="it in tableData.columnData" :key="it.name" :prop="it.prop" :align="it.align" :label="it.label" :width="it.width">
-            </el-table-column>
-            <!-- 操作 -->
-            <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*80">
-                <template slot-scope="scope">
-                    <el-button v-for="(it,index) in tableData.operaData.data" :key="it.label" :type="it.type" @click="btnClick(scope.row,index)" plain size="small">{{it.label}}
+    <div>
+        <!-- <el-card>
+            <div class="operations">
+                <div class="operations-item" v-for="item in operationData" :key="item.id">
+                    <el-button type="item.type">
+                        123
                     </el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+                </div>
+            </div>
+        </el-card> -->
+        <el-card>
+            <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后...">
 
-        <!-- 分页 -->
-        <el-pagination style="margin: 40px 0 10px 30px;" background @size-change="pageSizeChange" @current-change="currentChange" :current-page="currentPage" :page-sizes="pageSize" :page-size="limit"
-            layout="total, sizes, prev, pager, next, jumper" :total="total">
-        </el-pagination>
-    </el-card>
+                <el-table-column type="selection" align="center" label="序号" width="50">
+                </el-table-column>
+                <el-table-column v-for="it in tableData.columnData" :key="it.name" :prop="it.prop" :align="it.align" :label="it.label" :width="it.width">
+                </el-table-column>
+                <!-- 操作 -->
+                <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*80">
+                    <template slot-scope="scope">
+                        <el-button v-for="(it,index) in tableData.operaData.data" :key="it.label" :type="it.type" @click="btnClick(scope.row,index)" plain size="small">{{it.label}}
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <el-row :span="24">
+                <el-col :span="16">
+                    <!-- 分页 -->
+                    <el-pagination style="margin: 40px 0 10px 30px;" background @size-change="pageSizeChange" @current-change="currentChange" :current-page="currentPage" :page-sizes="pageSize"
+                        :page-size="limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
+                    </el-pagination>
+                </el-col>
+                <el-col :span="8">
+                    <div class="operations">
+                        <div class="operations-item" v-for="item in operationData" :key="item.id">
+                            <el-button type="item.type">
+                                123
+                            </el-button>
+                        </div>
+                    </div>
+                </el-col>
+            </el-row>
+
+        </el-card>
+    </div>
+
 </template>
 
 <script>
-import axios from "axios";
+var reqApi = {};
 export default {
     name: "tables",
     props: {
-        tableData: { type: Object, default: () => [] },
+        //表格数据
+        tableData: {
+            type: Object,
+            default: () => [],
+        },
+        //表格后操作按钮数据
+        operationData: {
+            type: Array,
+            default: () => [],
+        },
+        //查询元素
+        queryData: {
+            type: Object,
+            default: () => {},
+        },
     },
     data() {
         return {
+            loading: false,
             tableList: [], //表格渲染数据
             currentPage: 1, //当前页
             pageSize: [5, 10, 20, 50, 100], //页数选择
@@ -41,59 +80,62 @@ export default {
         };
     },
     mounted() {
+        //剥离出从父组件传过来的数据请求函数
+        reqApi.request = this.tableData.reqAPi;
         this.getTableData();
     },
     methods: {
         // 获取远程数据
         getTableData() {
-            // var data = {
-            //     page: this.currentPage,
-            //     limit: this.limit,
-            // };
-            // axios.post(this.tableData.reqUrl, data).then((res) => {
-            //     console.log("请求", res.data);
-            //     if (res.data.code == 1) {
-            //         // this.tableList = res.data.data.list;
-            //         this.tableList = [
-            //             {
-            //                 name: 123,
-            //                 time: 20000525,
-            //             },
-            //             {
-            //                 name: 123,
-            //                 time: 20000525,
-            //             },
-            //             {
-            //                 name: 123,
-            //                 time: 20000525,
-            //             },
-            //             {
-            //                 name: 123,
-            //                 time: 20000525,
-            //             },
-            //         ];
-            //         this.total = res.data.data.count;
-            //     }
-            // });
-            this.tableList = [
-                {
-                    name: 123,
-                    time: 20000525,
-                },
-                {
-                    name: 123,
-                    time: 20000525,
-                },
-                {
-                    name: 123,
-                    time: 20000525,
-                },
-                {
-                    name: 123,
-                    time: 20000525,
-                },
-            ];
-            this.total = res.data.data.count;
+            let _this = this;
+            _this.loading = true;
+
+            //获取父组件传过来的查询条件
+            let querydata = _this.queryData;
+
+            //封装数据
+            let data = {
+                ...querydata,
+                page: _this.currentPage,
+                limit: _this.limit,
+            };
+            reqApi
+                .request(data)
+                .then((res) => {
+                    //发送请求
+                    _this.loading = false;
+                    let result = res.data;
+                    if (result.code == 200) {
+                        _this.$message({
+                            type: "success",
+                            message: result.msg,
+                            center: true,
+                            duration: 300,
+                        });
+                        //将获取到的数据填充到表格中
+                        this.tableList = result.data.list;
+                        //给予数据总数用以分页（没有这个分页组件失效）
+                        this.total = result.data.total;
+                    } else {
+                        //失败
+                        _this.$message({
+                            type: "error",
+                            message: result.msg,
+                            center: true,
+                            duration: 300,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    //异常
+                    _this.loading = false;
+                    _this.$message({
+                        type: "error",
+                        message: "服务器错误",
+                        center: true,
+                        duration: 300,
+                    });
+                });
         },
         // 条数选择
         pageSizeChange(val) {
