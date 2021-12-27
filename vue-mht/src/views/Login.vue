@@ -8,12 +8,10 @@
                 <el-input type="text" v-model="loginForm.username"
                     auto-complete="off" placeholder="请输入账号"></el-input>
             </el-form-item>
-            
             <el-form-item prop="password">
                 <el-input type="password" v-model="loginForm.password"
                     auto-complete="off" placeholder="请输入密码" @keydown.enter.native="toLogin"></el-input>
             </el-form-item>
-
             <el-form-item>
                 <el-checkbox class="login_remember" v-model="loginForm.rememberMe"
                     label-position="left">

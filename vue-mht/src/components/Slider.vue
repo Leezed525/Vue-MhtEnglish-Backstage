@@ -78,6 +78,6 @@ export default {
 </script>
 <style scoped>
 .slider {
-    height: 100%;
+  height: 100%;
 }
 </style>

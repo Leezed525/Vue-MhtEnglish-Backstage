@@ -67,6 +67,7 @@ const getCompleteWords = data => {
 //   data: data
 // });
 
+//登录
 const login = data => {
   return request({
     // 表单数据加这个请求头
@@ -79,6 +80,7 @@ const login = data => {
   });
 };
 
+//获取系统用户信息
 const getAdminUserInfoByUsername = data => {
   return request({
     url: "admin/user/getAdminUserInfoByUsername",
@@ -87,6 +89,7 @@ const getAdminUserInfoByUsername = data => {
   });
 };
 
+//获取系统用户列表
 const getAllAdminUser = data => {
   return request({
     // 表单数据加这个请求头
@@ -98,10 +101,37 @@ const getAllAdminUser = data => {
     data: qs.stringify(data) //用 qs 将js对象转换为字符串
   });
 };
+//更新系统用户信息
+const updateAdminUser = data => {
+  return request({
+    url: "admin/user/updateAdminUser",
+    method: "post",
+    data:data 
+  });
+};
 
+//删除系统用户
+const deleteAdminUserByIds = data => {
+  return request({
+    url: "admin/user/deleteAdminUserByIds",
+    method: "post",
+    data:data 
+  });
+};
+
+const restPassword = data => {
+  return request({
+    url: "admin/user/restPassword",
+    method: "post",
+    data:qs.stringify(data) 
+  });
+};
 var userApi = {
   login,
   getAdminUserInfoByUsername,
-  getAllAdminUser
+  getAllAdminUser,
+  updateAdminUser,
+  deleteAdminUserByIds,
+  restPassword
 };
 export default userApi;

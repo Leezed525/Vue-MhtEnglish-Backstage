@@ -1,14 +1,5 @@
 <template>
     <div>
-        <!-- <el-card>
-            <div class="operations">
-                <div class="operations-item" v-for="item in operationData" :key="item.id">
-                    <el-button type="item.type">
-                        123
-                    </el-button>
-                </div>
-            </div>
-        </el-card> -->
         <el-card>
             <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后...">
 
@@ -19,7 +10,7 @@
                 <!-- 操作 -->
                 <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*80">
                     <template slot-scope="scope">
-                        <el-button v-for="(it,index) in tableData.operaData.data" :key="it.label" :type="it.type" @click="btnClick(scope.row,index)" plain size="small">{{it.label}}
+                        <el-button v-for="(it,index) in tableData.operaData.data" :key="it.label" :type="it.type" @click="btnClick(it.operafun,scope.row)" plain size="small">{{it.label}}
                         </el-button>
                     </template>
                 </el-table-column>
@@ -147,9 +138,13 @@ export default {
             this.currentPage = val;
             this.getTableData();
         },
-        // 操作按钮
-        btnClick(e, idx) {
-            this.$emit("click_" + (idx + 1), e);
+        // 触发父父组件事件按钮
+        //data 数据，
+        //fun 父组件函数名
+        btnClick(fun,data) {
+            // console.log(fun);
+            // this.$emit("click_" + (idx + 1), e);
+            this.$emit(fun,data);
         },
     },
 };
