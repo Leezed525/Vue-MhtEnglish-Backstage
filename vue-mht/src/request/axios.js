@@ -20,7 +20,7 @@ service.interceptors.request.use(
     let token = store.state.token.trim();
     if (token != null && token != "") {
       // 判断是否存在token，如果存在的话，则每个http header都加上token
-      config.headers.Authorization = `token ${store.state.token}`;
+      config.headers.AccessToken = store.state.token;
     }
     console.log(config);
     return config;
@@ -41,11 +41,11 @@ service.interceptors.response.use(
       switch (error.response.status) {
         case 401:
         // 返回 401 清除token信息并跳转到登录页面（未授权返回）
-        // store.commit(types.LOGOUT);
-        // router.replace({
-        //   path: "login",
-        //   query: { redirect: router.currentRoute.fullPath }
-        // });
+        store.commit(types.LOGOUT);
+        router.replace({
+          path: "login",
+          query: { redirect: router.currentRoute.fullPath }
+        });
       }
     }
     return Promise.reject(error.response.data); // 返回接口返回的错误信息

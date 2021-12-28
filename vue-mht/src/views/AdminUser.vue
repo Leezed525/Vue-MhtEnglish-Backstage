@@ -16,7 +16,10 @@
                         </el-col>
                         <el-col :span="6">
                             <el-form-item label="角色" class="admin-user-form-item">
-                                <el-input v-model="queryAdminUserForm.role_id" placeholder="请输入角色"></el-input>
+                                <el-select v-model="queryAdminUserForm.roleId" placeholder="请选择角色" clearable>
+                                    <el-option v-for="item in roleOptions" :key="item.id" :label="item.roleName" :value="item.id">
+                                    </el-option>
+                                </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
@@ -40,12 +43,15 @@
 
         <!-- 编辑框 -->
         <el-dialog title="编辑用户" :visible.sync="updateAdminUserFormVisible">
-            <el-form :model="updateForm" label-position="left" label-width="80px">
+            <el-form :model="updateForm" label-position="left" label-width="80px" :rules="updateFormRules">
                 <el-form-item label="昵称">
                     <el-input v-model="updateForm.nickname" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="角色">
-                    <el-input v-model="updateForm.roleId" autocomplete="off"></el-input>
+                <el-form-item label="角色" prop="roleId">
+                    <el-select v-model="updateForm.roleId" placeholder="请选择角色" >
+                        <el-option v-for="item in roleOptions" :key="item.id" :label="item.roleName" :value="item.id" v-if="item.id != 1">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -59,17 +65,20 @@
 
 <script>
 import adminUserApi from "../request/adminUserApi";
+import adminRoleApi from "../request/adminRoleApi";
 import tables from "@/components/Tables";
-import userApi from "../request/adminUserApi";
 export default {
     data() {
         return {
             updateAdminUserFormVisible: false,
+            //搜索表单
             queryAdminUserForm: {
                 username: "",
                 nickname: "",
                 roleId: "",
             },
+            //搜索表单权限选项
+            roleOptions: [],
             tableData: {
                 //把发送请求的函数封装进去
                 reqAPi: adminUserApi.getAllAdminUser,
@@ -127,10 +136,20 @@ export default {
                     type: "error",
                 },
             ],
+            //编辑表单
             updateForm: {
                 id: "",
                 nickname: "",
                 roleId: "",
+            },
+            updateFormRules: {
+                roleId: [
+                    {
+                        required: true,
+                        message: "请选择角色",
+                        trigger: "change",
+                    },
+                ],
             },
         };
     },
@@ -150,12 +169,11 @@ export default {
         search() {
             this.$refs.table.getTableData();
         },
-
         // 单条数据更新
         updateAdminUser(data) {
             let _this = this;
             if (data.id == 1) {
-                _this.$message.error("你的权限不能编辑此用户");
+                _this.$message.error("你没有权限编辑此用户");
                 return;
             }
             _this.updateAdminUserFormVisible = true;
@@ -186,7 +204,7 @@ export default {
         resetPassword(data) {
             let _this = this;
             if (data.id == 1) {
-                _this.$message.error("你的权限不能重置此用户");
+                _this.$message.error("你没有权限重置此用户");
                 return;
             }
             _this
@@ -204,8 +222,8 @@ export default {
         },
         toResetPassword(id) {
             let data = {
-                id
-            }
+                id,
+            };
             adminUserApi
                 .restPassword(data)
                 .then((res) => {
@@ -225,7 +243,7 @@ export default {
         deleteAdminUser(data) {
             let _this = this;
             if (data.id == 1) {
-                _this.$message.error("你的权限不能删除此用户");
+                _this.$message.error("你没有权限删除此用户");
                 return;
             }
             _this
@@ -257,6 +275,18 @@ export default {
                     this.$message.error("服务器错误，请稍后再试");
                 });
         },
+    },
+    mounted() {
+        //获取权限列表
+        let _this = this;
+        adminRoleApi.getAllRoles().then((res) => {
+            console.log(res);
+            let result = res.data;
+
+            if (result.code == 200) {
+                _this.roleOptions = result.data;
+            }
+        });
     },
 };
 </script>

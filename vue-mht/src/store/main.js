@@ -67,6 +67,9 @@ const mutations = {
   set_active_index (state, index) {
     this.state.activeIndex = index;
   },
+  LOGOUT(state){
+    state.token = ""
+  }
 };
 
 export default new Vuex.Store({

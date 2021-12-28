@@ -1,6 +1,5 @@
 // 刚刚封装的axios
 import request from "./axios";
-
 import qs from "qs";
 
 // // 1.获取图片验证码
