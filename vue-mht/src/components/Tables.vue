@@ -5,7 +5,8 @@
 
                 <el-table-column type="selection" align="center" label="序号" width="50">
                 </el-table-column>
-                <el-table-column v-for="it in tableData.columnData" :key="it.name" :prop="it.prop" :align="it.align" :label="it.label" :width="it.width">
+                <el-table-column v-for="it in tableData.columnData" :key="it.name" :prop="it.prop" :align="it.align" :label="it.label" :width="it.width" :need="it.needFormat"
+                    :formatter="formatAvailable">
                 </el-table-column>
                 <!-- 操作 -->
                 <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*80">
@@ -105,6 +106,7 @@ export default {
                         });
                         //将获取到的数据填充到表格中
                         this.tableList = result.data.list;
+                        // console.log(this.tableList);
                         //给予数据总数用以分页（没有这个分页组件失效）
                         this.total = result.data.total;
                     } else {
@@ -141,10 +143,23 @@ export default {
         // 触发父父组件事件按钮
         //data 数据，
         //fun 父组件函数名
-        btnClick(fun,data) {
+        btnClick(fun, data) {
             // console.log(fun);
             // this.$emit("click_" + (idx + 1), e);
-            this.$emit(fun,data);
+            this.$emit(fun, data);
+        },
+        formatAvailable(row, column, value) {
+            //检查有没有给table组件绑定format方法
+            let finalValue
+            if (this.$listeners["formatFun"]) {
+                // 如果提供执行
+                this.$emit("formatFun", row, column, value,val => {
+                    finalValue = val
+                });
+                return finalValue;
+            } else {
+                return value;
+            }
         },
     },
 };

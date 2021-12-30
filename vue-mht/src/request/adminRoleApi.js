@@ -8,7 +8,16 @@ const getAllRoles = data => {
   });
 };
 
+const getAllRolesByUserId = data => {
+  return request({
+    url: "/admin/role/getAllRolesByUserId",
+    method: "post",
+    data: qs.stringify(data)
+  });
+};
+
 const AdminRoleApi = {
-  getAllRoles
+  getAllRoles,
+  getAllRolesByUserId
 };
 export default AdminRoleApi;

@@ -105,7 +105,7 @@ const updateAdminUser = data => {
   return request({
     url: "admin/user/updateAdminUser",
     method: "post",
-    data:data 
+    data: data
   });
 };
 
@@ -114,7 +114,7 @@ const deleteAdminUserByIds = data => {
   return request({
     url: "admin/user/deleteAdminUserByIds",
     method: "post",
-    data:data 
+    data: data
   });
 };
 
@@ -122,15 +122,28 @@ const restPassword = data => {
   return request({
     url: "admin/user/restPassword",
     method: "post",
-    data:qs.stringify(data) 
+    data: qs.stringify(data)
   });
 };
+
+const reassignRoles = data => {
+  return request({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    url: "admin/user/reassignRoles",
+    method: "post",
+    data: qs.stringify(data,{arrayFormat : "repeat"})
+  });
+};
+
 var userApi = {
   login,
   getAdminUserInfoByUsername,
   getAllAdminUser,
   updateAdminUser,
   deleteAdminUserByIds,
-  restPassword
+  restPassword,
+  reassignRoles
 };
 export default userApi;

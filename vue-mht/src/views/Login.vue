@@ -60,7 +60,6 @@ export default {
     methods: {
         //提交表单
         submitForm(formName) {
-            console.log(this.$refs)
             this.$refs[formName].validate((valid) => {
             if (valid) {
                 this.toLogin()
@@ -77,7 +76,6 @@ export default {
                 username:_this.loginForm.username,
                 password:_this.loginForm.password.trim(),
             }
-            console.log(data)
             adminUserApi.login(data).then(res => {
                 let result = res.data
                 if(result.code == 200){
@@ -119,7 +117,6 @@ export default {
                     })
                 }
             }).catch(err => {
-                console.log(err)
                 _this.$message({
                     typre:"error",
                     message:"网络错误",
