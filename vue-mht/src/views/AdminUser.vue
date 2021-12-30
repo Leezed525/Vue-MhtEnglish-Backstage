@@ -38,14 +38,14 @@
         <el-divider></el-divider>
         <div class="info-table">
             <tables ref="adminUserTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminUserForm" @update="updateAdminUser" @resetPassword="resetPassword"
-                @delete="deleteAdminUser" @assign="assign" @formatFun="formatUserForm">
+                @delete="deleteAdminUser" @assign="assign" @formatFun="formatUserForm" @batchRemove="batchRemove" @addAdminUser="addAdminUser">
             </tables>
         </div>
 
         <!-- 编辑框 -->
         <el-dialog title="编辑用户" :visible.sync="updateAdminUserFormVisible">
-            <el-form :model="updateForm" label-position="left" label-width="80px" :rules="updateFormRules">
-                <el-form-item label="昵称">
+            <el-form :model="updateForm" label-position="left" label-width="80px" :rules="updateFormRules" ref="updataForm">
+                <el-form-item label="昵称" prop="nickname">
                     <el-input v-model="updateForm.nickname" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -65,7 +65,7 @@
         </el-dialog>
 
         <!-- 分配角色弹出框 -->
-        <el-dialog title="分配角色" :visible.sync="assignRolesFormVisiable" append-to-body>
+        <el-dialog title="分配角色" :visible.sync="assignRolesFormVisible" append-to-body>
             <el-table :data="roleOptions" @selection-change="handleSelectionChange" ref="assignTable">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column property="id" label="id" width="50"></el-table-column>
@@ -73,10 +73,36 @@
                 <el-table-column property="comment" label="备注"></el-table-column>
             </el-table>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="assignRolesFormVisiable = false">取 消</el-button>
+                <el-button @click="assignRolesFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="toAssignRoles()">确 定</el-button>
             </div>
         </el-dialog>
+
+        <!-- 添加用户弹出框 -->
+        <el-dialog title="添加用户" :visible.sync="addAdminUserFormVisible">
+            <el-form :model="addAdminUserForm" label-position="left" label-width="80px" :rules="addAdminUserFormRules" ref="addAdminUserForm">
+                <el-form-item label="用户名" prop="username">
+                    <el-input v-model="addAdminUserForm.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="昵称" prop="nickname">
+                    <el-input v-model="addAdminUserForm.nickname" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input v-model="addAdminUserForm.remark" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="是否可用">
+                    <template>
+                        <el-radio v-model="addAdminUserForm.available" :label="true">可用</el-radio>
+                        <el-radio v-model="addAdminUserForm.available" :label="false">不可用</el-radio>
+                    </template>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="addAdminUserFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="toAddAdminUser(addAdminUserForm)">确 定</el-button>
+            </div>
+        </el-dialog>
+
     </div>
 
 </template>
@@ -88,11 +114,28 @@ import tables from "@/components/Tables";
 import AdminRoleApi from "../request/adminRoleApi";
 export default {
     data() {
+        var checkUsername = (rule, value, callback) => {
+            let data ={
+                username:value
+            }
+            adminUserApi.checkUsernameUnique(data).then((res) => {
+                let result = res.data;
+                if (result.code == 200) {
+                    console.log("用户名可用");
+                    callback();
+                } else {
+                    callback(new Error("用户名已存在"));
+                }
+            });
+        };
+
         return {
             //编辑弹出框是否打开
             updateAdminUserFormVisible: false,
             //分配角色弹出框是否打开
-            assignRolesFormVisiable: false,
+            assignRolesFormVisible: false,
+            // 添加用户弹出框是否打开
+            addAdminUserFormVisible: false,
             //搜索表单
             queryAdminUserForm: {
                 username: "",
@@ -167,7 +210,15 @@ export default {
             operationData: [
                 {
                     id: 1,
-                    type: "error",
+                    type: "danger",
+                    label: "批量删除",
+                    operafun: "batchRemove",
+                },
+                {
+                    id: 2,
+                    type: "success",
+                    label: "添加用户",
+                    operafun: "addAdminUser",
                 },
             ],
             //编辑表单
@@ -179,10 +230,10 @@ export default {
             },
             //编辑表单校验规则
             updateFormRules: {
-                roleId: [
+                nickname: [
                     {
                         required: true,
-                        message: "请选择角色",
+                        message: "请输入昵称",
                         trigger: "change",
                     },
                 ],
@@ -191,6 +242,30 @@ export default {
             roleSelection: [],
             //正在进行分配的id
             assigningId: 0,
+            // 添加用户表单
+            addAdminUserForm: {
+                username: "",
+                nickname: "",
+                remark: "",
+                available: true,
+            },
+            addAdminUserFormRules: {
+                username: [
+                    {
+                        required: true,
+                        message: "请输入用户名",
+                        trigger: "blur",
+                    },
+                    { validator: checkUsername, trigger: "blur" },
+                ],
+                nickname: [
+                    {
+                        required: true,
+                        message: "请输入昵称",
+                        trigger: "blur",
+                    },
+                ],
+            },
         };
     },
     components: {
@@ -229,10 +304,6 @@ export default {
         // 单条数据更新
         updateAdminUser(data) {
             let _this = this;
-            if (data.id == 1) {
-                _this.$message.error("你没有权限编辑此用户");
-                return;
-            }
             _this.updateAdminUserFormVisible = true;
             _this.updateForm.id = data.id;
             _this.updateForm.nickname = data.nickname;
@@ -241,31 +312,33 @@ export default {
         },
         //发送编辑请求
         toUpdateAdminUser(data) {
-            console.log(data);
             let _this = this;
-            adminUserApi
-                .updateAdminUser(data)
-                .then((res) => {
-                    let result = res.data;
-                    if (result.code == 200) {
-                        _this.$message(result.msg);
-                        this.$refs.adminUserTable.getTableData();
-                    } else {
-                        _this.$message.error(result.msg);
-                    }
-                })
-                .catch((error) => {
-                    _this.$message.error("服务器错误，请稍后再试");
-                });
-            _this.updateAdminUserFormVisible = false;
+            //验证表单规则
+            _this.$refs["updataForm"].validate((valid) => {
+                //验证通过
+                if (valid) {
+                    adminUserApi
+                        .updateAdminUser(data)
+                        .then((res) => {
+                            let result = res.data;
+                            if (result.code == 200) {
+                                _this.$message(result.msg);
+                                this.$refs.adminUserTable.getTableData();
+                            } else {
+                                _this.$message.error(result.msg);
+                            }
+                        })
+                        .catch((error) => {
+                            _this.$message.error("服务器错误，请稍后再试");
+                        });
+                    _this.updateAdminUserFormVisible = false;
+                    return;
+                }
+            });
         },
         //重置密码
         resetPassword(data) {
             let _this = this;
-            if (data.id == 1) {
-                _this.$message.error("你没有权限重置此用户");
-                return;
-            }
             _this
                 .$confirm("是否要重置该用户的密码为123456", "警告", {
                     confirmButtonText: "确定",
@@ -303,7 +376,7 @@ export default {
             // console.log("assign roles");
             let _this = this;
             let id = data.id;
-            _this.assignRolesFormVisiable = true;
+            _this.assignRolesFormVisible = true;
             // 将该用户原先拥有的权限勾选
             // 如果data中存的 id 与之前的一样的话，说明系统用户换了一个操作用户，这时候才去搜索权限
             if (id != _this.assigningId) {
@@ -363,16 +436,12 @@ export default {
                 .catch((error) => {
                     _this.$message.error(error.message);
                 });
-            _this.assignRolesFormVisiable = false;
+            _this.assignRolesFormVisible = false;
         },
 
         //删除用户
         deleteAdminUser(data) {
             let _this = this;
-            if (data.id == 1) {
-                _this.$message.error("你没有权限删除此用户");
-                return;
-            }
             _this
                 .$confirm("是否要永久删除此系统用户", "警告", {
                     confirmButtonText: "确定",
@@ -381,13 +450,12 @@ export default {
                 })
                 .then(() => {
                     //todelete
-                    _this.toDelete(data.id);
+                    _this.toDelete([data.id]);
                 })
                 .catch(() => {});
         },
         // 发送删除用户请求
-        toDelete(id) {
-            let ids = [id];
+        toDelete(ids) {
             adminUserApi
                 .deleteAdminUserByIds(ids)
                 .then((res) => {
@@ -409,6 +477,56 @@ export default {
             this.roleSelection = val;
             // console.log(this.roleSelection);
         },
+        batchRemove(val) {
+            let ids = [];
+            let _this = this;
+            _this
+                .$confirm("是否要永久删除这些系统用户", "警告", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning",
+                })
+                .then(() => {
+                    //todelete
+                    val.forEach(item => {
+                        ids.push(item.id);
+                    });
+                    _this.toDelete(ids);
+                })
+                .catch(() => {});
+        },
+        addAdminUser() {
+            let _this = this;
+            _this.addAdminUserFormVisible = true;
+        },
+        toAddAdminUser(data){
+            let _this = this;
+            _this.$refs["addAdminUserForm"].validate((valid) => {
+                //验证通过
+                if (valid) {
+                    adminUserApi
+                        .addAdminUser(data)
+                        .then((res) => {
+                            let result = res.data;
+                            if (result.code == 200) {
+                                _this.$message.success(result.msg);
+                                this.$refs.adminUserTable.getTableData();
+                            } else {
+                                _this.$message.error(result.msg);
+                            }
+                        })
+                        .catch((error) => {
+                            _this.$message.error("服务器错误，请稍后再试");
+                        });
+                    _this.addAdminUserFormVisible = false;
+                    _this.addAdminUserForm.username = "";
+                    _this.addAdminUserForm.nickname = "";
+                    _this.addAdminUserForm.remark = "";
+                    
+                    return;
+                }
+            });
+        }
     },
     mounted() {
         //获取权限列表

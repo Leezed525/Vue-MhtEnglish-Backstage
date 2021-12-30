@@ -112,9 +112,12 @@ const updateAdminUser = data => {
 //删除系统用户
 const deleteAdminUserByIds = data => {
   return request({
+    headers: {
+      "Content-Type": "application/json"
+    },
     url: "admin/user/deleteAdminUserByIds",
     method: "post",
-    data: data
+    data: JSON.stringify(data)
   });
 };
 
@@ -133,7 +136,26 @@ const reassignRoles = data => {
     },
     url: "admin/user/reassignRoles",
     method: "post",
-    data: qs.stringify(data,{arrayFormat : "repeat"})
+    data: qs.stringify(data, { arrayFormat: "repeat" })
+  });
+};
+
+const checkUsernameUnique = data => {
+  return request({
+    // headers: {
+    //   "Content-Type": "application/x-www-form-urlencoded"
+    // },
+    url: "admin/user/checkUsernameUnique",
+    method: "post",
+    data: qs.stringify(data)
+  });
+};
+
+const addAdminUser = data => {
+  return request({
+    url: "admin/user/addAdminUser",
+    method: "post",
+    data: data
   });
 };
 
@@ -144,6 +166,8 @@ var userApi = {
   updateAdminUser,
   deleteAdminUserByIds,
   restPassword,
-  reassignRoles
+  reassignRoles,
+  checkUsernameUnique,
+  addAdminUser
 };
 export default userApi;

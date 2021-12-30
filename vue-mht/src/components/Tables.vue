@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-card>
-            <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后...">
+            <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后..."  @selection-change="handleSelectionChange">
 
                 <el-table-column type="selection" align="center" label="序号" width="50">
                 </el-table-column>
@@ -18,19 +18,17 @@
             </el-table>
 
             <el-row :span="24">
+                <!-- 分页 -->
                 <el-col :span="16">
                     <!-- 分页 -->
                     <el-pagination style="margin: 40px 0 10px 30px;" background @size-change="pageSizeChange" @current-change="currentChange" :current-page="currentPage" :page-sizes="pageSize"
                         :page-size="limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
                     </el-pagination>
                 </el-col>
+                <!-- 表格操作按钮 -->
                 <el-col :span="8">
-                    <div class="operations">
-                        <div class="operations-item" v-for="item in operationData" :key="item.id">
-                            <el-button type="item.type">
-                                123
-                            </el-button>
-                        </div>
+                    <div class="operations" style="margin: 40px 0 10px 30px;">
+                        <el-button v-for="item in operationData" :key="item.id" :type="item.type" @click="btnClick(item.operafun,tableSelection)">{{item.label}}</el-button>
                     </div>
                 </el-col>
             </el-row>
@@ -69,6 +67,7 @@ export default {
             pageSize: [5, 10, 20, 50, 100], //页数选择
             total: 0, //总条数
             limit: 5, //分页数
+            tableSelection: [],
         };
     },
     mounted() {
@@ -102,7 +101,7 @@ export default {
                             type: "success",
                             message: result.msg,
                             center: true,
-                            duration: 300,
+                            duration: 500,
                         });
                         //将获取到的数据填充到表格中
                         this.tableList = result.data.list;
@@ -115,7 +114,7 @@ export default {
                             type: "error",
                             message: result.msg,
                             center: true,
-                            duration: 300,
+                            duration: 500,
                         });
                     }
                 })
@@ -126,13 +125,14 @@ export default {
                         type: "error",
                         message: "服务器错误",
                         center: true,
-                        duration: 300,
+                        duration: 500,
                     });
                 });
         },
         // 条数选择
         pageSizeChange(val) {
             this.limit = val;
+            this.currentPage = 1;
             this.getTableData();
         },
         // 当前页选择
@@ -150,16 +150,20 @@ export default {
         },
         formatAvailable(row, column, value) {
             //检查有没有给table组件绑定format方法
-            let finalValue
+            let finalValue;
             if (this.$listeners["formatFun"]) {
                 // 如果提供执行
-                this.$emit("formatFun", row, column, value,val => {
-                    finalValue = val
+                this.$emit("formatFun", row, column, value, (val) => {
+                    finalValue = val;
                 });
                 return finalValue;
             } else {
                 return value;
             }
+        },
+        //处理选中数据事件
+        handleSelectionChange(val) {
+            this.tableSelection = val;
         },
     },
 };
