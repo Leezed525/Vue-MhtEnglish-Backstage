@@ -28,30 +28,30 @@ export default {
                     icon: "el-icon-location",
                     children: [
                         {
-                            index: "/page1",
+                            index: "/word",
                             childtitle: "单词管理",
                         },
                         {
-                            index: "/page2",
+                            index: "/user",
                             childtitle: "用户管理",
                         },
                     ],
                 },
                 {
                     id: "2",
-                    title: "权限管理",
+                    title: "人员管理",
                     icon: "el-icon-location",
                     children: [
                         {
-                            index: "/page4",
+                            index: "/adminPermission",
                             childtitle: "权限管理",
                         },
                         {
-                            index: "/page4",
+                            index: "/adminRole",
                             childtitle: "角色管理",
                         },
                         {
-                            index: "/AdminUser",
+                            index: "/adminUser",
                             childtitle: "管理人员管理",
                         },
                     ],
@@ -62,11 +62,11 @@ export default {
                     icon: "el-icon-location",
                     children: [
                         {
-                            index: "/page4",
+                            index: "/notice",
                             childtitle: "系统公告",
                         },
                         {
-                            index: "/page3",
+                            index: "/log",
                             childtitle: "系统日志",
                         },
                     ],

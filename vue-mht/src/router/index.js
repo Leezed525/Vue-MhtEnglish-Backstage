@@ -6,6 +6,13 @@ import Login from "@/views/Login";
 import Index from "@/views/Index";
 import Main from "@/views/Main";
 import AdminUser from "@/views/AdminUser";
+import AdminRole from "@/views/AdminRole";
+import AdminPermission from "@/views/AdminPermission";
+import Word from "@/views/Word";
+import Log from "@/views/Log";
+import Notice from "@/views/Notice";
+import User from "@/views/User";
+
 
 Vue.use(Router);
 
@@ -15,12 +22,13 @@ Router.prototype.push = function push(location) {
 };
 
 const router = new Router({
+  mode:"history",
   routes: [
     {
       path: "/",
       name: "Index",
       component: Index,
-      redirect: "adminuser",
+      redirect: "Main",
       meta: {
         requireAuth: true
       },
@@ -34,13 +42,61 @@ const router = new Router({
           }
         },
         {
-          path: "adminuser",
+          path: "adminPermission",
+          name: "AdminPermission",
+          component: AdminPermission,
+          meta: {
+            requireAuth: true
+          }
+        },
+        {
+          path: "adminRole",
+          name: "AdminRole",
+          component: AdminRole,
+          meta: {
+            requireAuth: true
+          }
+        },
+        {
+          path: "adminUser",
           name: "AdminUser",
           component: AdminUser,
           meta: {
             requireAuth: true
           }
-        }
+        },
+        {
+          path: "log",
+          name: "Log",
+          component: Log,
+          meta: {
+            requireAuth: true
+          }
+        },
+        {
+          path: "notice",
+          name: "Notice",
+          component: Notice,
+          meta: {
+            requireAuth: true
+          }
+        },
+        {
+          path: "user",
+          name: "User",
+          component: User,
+          meta: {
+            requireAuth: true
+          }
+        },
+        {
+          path: "word",
+          name: "Word",
+          component: Word,
+          meta: {
+            requireAuth: true
+          }
+        },
       ]
     },
     {

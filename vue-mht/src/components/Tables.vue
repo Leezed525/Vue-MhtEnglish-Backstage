@@ -1,7 +1,8 @@
 <template>
     <div>
         <el-card>
-            <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后..."  @selection-change="handleSelectionChange">
+            <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后..."
+                @selection-change="handleSelectionChange">
 
                 <el-table-column type="selection" align="center" label="序号" width="50">
                 </el-table-column>
@@ -105,7 +106,6 @@ export default {
                         });
                         //将获取到的数据填充到表格中
                         this.tableList = result.data.list;
-                        // console.log(this.tableList);
                         //给予数据总数用以分页（没有这个分页组件失效）
                         this.total = result.data.total;
                     } else {
