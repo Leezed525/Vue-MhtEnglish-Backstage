@@ -30,8 +30,8 @@
         <el-divider></el-divider>
         <!-- 表格部分 -->
         <div class="info-table">
-            <tables ref="adminRoleTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminRoleForm" @update="updateAdminRole" @delete="deleteAdminUser" @assign="assign"
-                @formatFun="formatRoleForm" @addAdminUser="addAdminUser">
+            <tables ref="adminRoleTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminRoleForm" @update="updateAdminRole" @delete="deleteAdminRole" @assign="assign"
+                @formatFun="formatRoleForm" @addAdminRole="addAdminRole">
             </tables>
         </div>
 
@@ -72,7 +72,7 @@
         </el-dialog>
 
         <!-- 添加用户弹出框 -->
-        <el-dialog title="添加用户" :visible.sync="addAdminRoleFormVisible">
+        <el-dialog title="添加角色" :visible.sync="addAdminRoleFormVisible">
             <el-form :model="addAdminRoleForm" label-position="left" label-width="80px" :rules="addAdminRoleFormRules" ref="addAdminRoleForm">
                 <el-form-item label="角色名" prop="roleName">
                     <el-input v-model="addAdminRoleForm.roleName" autocomplete="off"></el-input>
@@ -118,7 +118,6 @@ export default {
                 }
             });
         };
-
         return {
             //编辑弹出框是否打开
             updateAdminRoleFormVisible: false,
@@ -187,8 +186,8 @@ export default {
                 {
                     id: 2,
                     type: "success",
-                    label: "添加用户",
-                    operafun: "addAdminUser",
+                    label: "添加角色",
+                    operafun: "addAdminRole",
                 },
             ],
             //编辑表单
@@ -363,7 +362,7 @@ export default {
         },
 
         //删除用户
-        deleteAdminUser(data) {
+        deleteAdminRole(data) {
             let _this = this;
             _this
                 .$confirm("是否要永久删除此角色", "警告", {
@@ -399,7 +398,7 @@ export default {
             this.roleSelection = val;
             // console.log(this.roleSelection);
         },
-        addAdminUser() {
+        addAdminRole() {
             let _this = this;
             _this.addAdminRoleFormVisible = true;
         },
@@ -424,9 +423,7 @@ export default {
                             _this.$message.error("服务器错误，请稍后再试");
                         });
                     _this.$nextTick(() => {
-                        _this.addAdminRoleForm.roleName = "";
-                        _this.addAdminRoleForm.comment = "";
-                        _this.addAdminRoleForm.available = true;
+                        _this.$refs["addAdminRoleForm"].resetFields();
                     });
 
                     return;
