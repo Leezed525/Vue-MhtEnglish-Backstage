@@ -24,15 +24,13 @@ const updateAdminPermission = data => {
   });
 };
 
-const addAdminPermission = data =>{
+const addAdminPermission = data => {
   return request({
     url: "admin/permission/addAdminPermission",
     method: "post",
     data: data
   });
-}
-
-
+};
 
 const checkTitleUnique = data => {
   return request({
@@ -55,12 +53,29 @@ const deleteAdminPermissionByIds = data => {
   });
 };
 
+const getPermissionTree = () => {
+  return request({
+    url: "admin/permission/getPermissionTree",
+    method: "get"
+  });
+};
+
+const getPermissionByRoleId = data =>{
+  return request({
+    url: "admin/permission/getPermissionByRoleId",
+    method: "post",
+    data: qs.stringify(data),
+  });
+}
+
 const AdminPermissionApi = {
   getAllPermissions,
   getAllMenu,
   updateAdminPermission,
   addAdminPermission,
   checkTitleUnique,
-  deleteAdminPermissionByIds
+  deleteAdminPermissionByIds,
+  getPermissionTree,
+  getPermissionByRoleId
 };
 export default AdminPermissionApi;

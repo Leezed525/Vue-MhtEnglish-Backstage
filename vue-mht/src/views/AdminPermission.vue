@@ -38,8 +38,8 @@
         <el-divider></el-divider>
         <!-- 表格部分 -->
         <div class="info-table">
-            <tables ref="adminPermissionTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminPermissionForm" @update="updateAdminPermission" @delete="deleteAdminPermission"
-                @formatFun="formatPermissionForm" @addAdminPermission="addAdminPermission">
+            <tables ref="adminPermissionTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminPermissionForm" @update="updateAdminPermission"
+                @delete="deleteAdminPermission" @formatFun="formatPermissionForm" @addAdminPermission="addAdminPermission">
             </tables>
         </div>
 
@@ -54,6 +54,12 @@
                 </el-form-item>
                 <el-form-item label="权限编码" prop="percode">
                     <el-input v-model="updateForm.percode" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="所属菜单" prop="pid"> 
+                    <el-select v-model="updateForm.pid" placeholder="请选择菜单">
+                        <el-option v-for="item in menuOption" :key="item.id" :label="item.title" :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="是否可用">
                     <template>
@@ -226,6 +232,13 @@ export default {
                         trigger: "change",
                     },
                 ],
+                pid: [
+                    {
+                        required: true,
+                        message: "请输入权限编码",
+                        trigger: "change",
+                    },
+                ],
             },
             //分配角色选中的选项
             roleSelection: [],
@@ -255,6 +268,13 @@ export default {
                     },
                 ],
                 percode: [
+                    {
+                        required: true,
+                        message: "请输入权限编码",
+                        trigger: "change",
+                    },
+                ],
+                pid: [
                     {
                         required: true,
                         message: "请输入权限编码",
@@ -302,6 +322,7 @@ export default {
             _this.updateForm.title = data.title;
             _this.updateForm.reqUrl = data.reqUrl;
             _this.updateForm.percode = data.percode;
+            _this.updateForm.pid = data.pid;
             _this.updateForm.available = data.available;
         },
         //发送编辑请求

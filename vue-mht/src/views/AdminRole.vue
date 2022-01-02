@@ -58,15 +58,11 @@
         </el-dialog>
 
         <!-- 分配角色弹出框 -->
-        <el-dialog title="分配角色" :visible.sync="assignRolesFormVisible" append-to-body>
-            <el-table :data="roleOptions" @selection-change="handleSelectionChange" ref="assignTable">
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column property="id" label="id" width="50"></el-table-column>
-                <el-table-column property="roleName" label="角色名" width="150"></el-table-column>
-                <el-table-column property="comment" label="备注"></el-table-column>
-            </el-table>
+        <el-dialog title="分配角色" :visible.sync="assignPermissionFormVisible" append-to-body>
+            <el-tree :data="permissionTreeData" show-checkbox node-key="id" :props="defaultProps" ref="tree">
+            </el-tree>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="assignRolesFormVisible = false">取 消</el-button>
+                <el-button @click="assignPermissionFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="toAssignRoles()">确 定</el-button>
             </div>
         </el-dialog>
@@ -100,8 +96,9 @@
 <script>
 import adminUserApi from "../request/adminUserApi";
 import adminRoleApi from "../request/adminRoleApi";
+import adminPermissionApi from "../request/adminPermissionApi";
+
 import tables from "@/components/Tables";
-import AdminRoleApi from "../request/adminRoleApi";
 export default {
     data() {
         var checkRolename = (rule, value, callback) => {
@@ -122,7 +119,7 @@ export default {
             //编辑弹出框是否打开
             updateAdminRoleFormVisible: false,
             //分配角色弹出框是否打开
-            assignRolesFormVisible: false,
+            assignPermissionFormVisible: false,
             // 添加用户弹出框是否打开
             addAdminRoleFormVisible: false,
             //搜索表单
@@ -217,6 +214,7 @@ export default {
                 comment: "",
                 available: true,
             },
+            // 添加用户表单规则
             addAdminRoleFormRules: {
                 roleName: [
                     {
@@ -226,6 +224,12 @@ export default {
                     },
                     { validator: checkRolename, trigger: "blur" },
                 ],
+            },
+            // 分配权限权限树
+            permissionTreeData: {},
+            defaultProps: {
+                children: "children",
+                label: "label",
             },
         };
     },
@@ -293,42 +297,35 @@ export default {
                 }
             });
         },
-        //打开分配角色框并勾选角色所拥有的权限
+        //打开分配权限树并勾选角色所拥有的权限
         assign(data) {
             // console.log("assign roles");
             let _this = this;
             let id = data.id;
-            _this.assignRolesFormVisible = true;
-            // 将该用户原先拥有的权限勾选
-            // 如果data中存的 id 与之前的一样的话，说明系统用户换了一个操作用户，这时候才去搜索权限
-            if (id != _this.assigningId) {
-                // 去搜索
-                let hadRoles;
-                _this.$nextTick(() => {
-                    //直接这句有问题，要在dom元素更新后vue获取$refs才能去清理选项，主要是第一次打开dialog会有问题
-                    _this.$refs.assignTable.clearSelection();
-                });
-                AdminRoleApi.getAllRolesByUserId({ userId: id }).then((res) => {
-                    let result = res.data;
-                    console.log(res);
-                    if (result.code == 200) {
-                        hadRoles = result.data;
-                        //默认勾选查到的权限
-                        hadRoles.forEach((role) => {
-                            // _this.$refs.assignTable.toggleRowSelection(
-                            //     _this.roleOptions.find((item) => {
-                            //         return item.id == role.id;
-                            //     }),
-                            //     true
-                            // );
-                        });
-                    } else {
-                        _this.$message.error("数据请求失败");
-                    }
-                });
-            }
-            //标记正在分配的id
-            _this.assigningId = id;
+            //清空上一个角色的权限
+            console.log(1);
+            console.log(_this.$refs);
+            _this.assignPermissionFormVisible = true;
+
+            _this.$nextTick(() => {
+                _this.$refs.tree.setCheckedKeys([]);
+                adminPermissionApi
+                    .getPermissionByRoleId({
+                        RoleId: id,
+                    })
+                    .then((res) => {
+                        let result = res.data;
+                        if (result.code === 200) {
+                            let setkeys = [];
+                            result.data.forEach((item) => {
+                                setkeys.push(item.id);
+                            });
+                            _this.$refs.tree.setCheckedKeys(setkeys);
+                        } else {
+                            _this.$message.error("数据请求出错");
+                        }
+                    });
+            });
         },
         // 发送分配角色请求
         toAssignRoles() {
@@ -358,7 +355,7 @@ export default {
                 .catch((error) => {
                     _this.$message.error(error.message);
                 });
-            _this.assignRolesFormVisible = false;
+            _this.assignPermissionFormVisible = false;
         },
 
         //删除用户
@@ -432,13 +429,14 @@ export default {
         },
     },
     mounted() {
-        //获取权限列表
         let _this = this;
-        adminRoleApi.getAllRoles().then((res) => {
+        //获取权限树
+        adminPermissionApi.getPermissionTree().then((res) => {
             let result = res.data;
-
-            if (result.code == 200) {
-                _this.roleOptions = result.data;
+            if (result.code === 200) {
+                _this.permissionTreeData = result.data;
+            } else {
+                _this.$message.error("获取权限树失败");
             }
         });
     },
