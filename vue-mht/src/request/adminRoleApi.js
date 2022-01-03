@@ -66,6 +66,17 @@ const deleteAdminRoleByIds = data => {
   });
 };
 
+const reassignPermission = data =>{
+  return request({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    url: "admin/role/reassignPermission",
+    method: "post",
+    data: qs.stringify(data, { arrayFormat: "repeat" })
+  });
+}
+
 const AdminRoleApi = {
   getAllRoles,
   getAllRolesByUserId,
@@ -73,6 +84,7 @@ const AdminRoleApi = {
   updateAdminRole,
   checkRolenameUnique,
   addAdminRole,
-  deleteAdminRoleByIds
+  deleteAdminRoleByIds,
+  reassignPermission
 };
 export default AdminRoleApi;

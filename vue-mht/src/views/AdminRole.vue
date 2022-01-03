@@ -58,7 +58,7 @@
         </el-dialog>
 
         <!-- 分配角色弹出框 -->
-        <el-dialog title="分配角色" :visible.sync="assignPermissionFormVisible" append-to-body>
+        <el-dialog title="分配角色" :visible.sync="assignPermissionFormVisible" append-to-body v-loading="assignLoading">
             <el-tree :data="permissionTreeData" show-checkbox node-key="id" :props="defaultProps" ref="tree">
             </el-tree>
             <div slot="footer" class="dialog-footer">
@@ -231,6 +231,7 @@ export default {
                 children: "children",
                 label: "label",
             },
+            assignLoading: false,
         };
     },
     components: {
@@ -305,8 +306,9 @@ export default {
             //清空上一个角色的权限
             console.log(1);
             console.log(_this.$refs);
+            _this.assignLoading = true;
             _this.assignPermissionFormVisible = true;
-
+            _this.assigningId = id;
             _this.$nextTick(() => {
                 _this.$refs.tree.setCheckedKeys([]);
                 adminPermissionApi
@@ -314,6 +316,7 @@ export default {
                         RoleId: id,
                     })
                     .then((res) => {
+                        _this.assignLoading = false;
                         let result = res.data;
                         if (result.code === 200) {
                             let setkeys = [];
@@ -324,25 +327,24 @@ export default {
                         } else {
                             _this.$message.error("数据请求出错");
                         }
+                    })
+                    .catch((error) => {
+                        _this.assignLoading = false;
+                        _this.$message.error("服务器出错");
                     });
             });
         },
         // 发送分配角色请求
         toAssignRoles() {
             let _this = this;
-            let rIds = [];
-            console.log(_this.roleSelection);
-            _this.roleSelection.forEach((item) => {
-                console.log(item);
-                rIds.push(item.id);
-            });
+            let pids = _this.$refs.tree.getCheckedKeys();
+            console.log(pids);
             let data = {
-                rIds: rIds,
-                uId: _this.assigningId,
+                pIds: pids,
+                rId: _this.assigningId,
             };
-            console.log(data);
-            adminUserApi
-                .reassignRoles(data)
+            adminRoleApi
+                .reassignPermission(data)
                 .then((res) => {
                     let result = res.data;
                     if (result.code === 200) {
