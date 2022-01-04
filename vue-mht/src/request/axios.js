@@ -1,5 +1,6 @@
 import axios from "axios";
 import store from "../store/main";
+import { MessageBox, Message } from 'element-ui'
 
 //  让请求在浏览器中允许跨域携带cookie
 axios.defaults.withCredentials = true;
@@ -26,26 +27,36 @@ service.interceptors.request.use(
     return config;
   },
   error => {
-    console.log(error); // for debug 11
+    // console.log(error); // for debug 11
     Promise.reject(error);
   }
 );
 
 // http response 拦截器
 service.interceptors.response.use(
+  
   response => {
+    let res = response.data;
+    if(res.code === 401){
+      Message.error({
+        message:res.msg,
+      }); 
+    }
     return response;
   },
   error => {
     if (error.response) {
       switch (error.response.status) {
-        case 401:
+        case 500:{
+          Message.error("服务器出错");
+        }
         // 返回 401 清除token信息并跳转到登录页面（未授权返回）
-        store.commit(types.LOGOUT);
-        router.replace({
-          path: "login",
-          query: { redirect: router.currentRoute.fullPath }
-        });
+        // store.commit(types.LOGOUT);
+        // router.replace({
+        //   path: "login",
+        //   query: { redirect: router.currentRoute.fullPath }
+        // });
+        console.log(error.response.data)
       }
     }
     return Promise.reject(error.response.data); // 返回接口返回的错误信息

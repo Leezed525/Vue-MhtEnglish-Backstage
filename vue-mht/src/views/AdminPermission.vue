@@ -415,6 +415,13 @@ export default {
             });
         },
     },
+    beforeCreate() {
+        adminPermissionApi.toPermission().then(res =>{
+            if(res.data.code === 401){
+                this.$router.replace("/");
+            }
+        })
+    },
     mounted() {
         //获取权限列表
         let _this = this;

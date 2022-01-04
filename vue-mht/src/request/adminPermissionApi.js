@@ -1,6 +1,13 @@
 import request from "./axios";
 import qs from "qs";
 
+const toPermission = data =>{
+  return request({
+    url: "admin/system/toPermission",
+    method: "get",
+  });
+}
+
 const getAllPermissions = data => {
   return new request({
     url: "/admin/permission/getAllAdminPermission",
@@ -69,6 +76,7 @@ const getPermissionByRoleId = data =>{
 }
 
 const AdminPermissionApi = {
+  toPermission,
   getAllPermissions,
   getAllMenu,
   updateAdminPermission,

@@ -430,6 +430,13 @@ export default {
             });
         },
     },
+    beforeCreate() {
+        adminRoleApi.toRole().then(res =>{
+            if(res.data.code === 401){
+                this.$router.replace("/");
+            }
+        })
+    },
     mounted() {
         let _this = this;
         //获取权限树

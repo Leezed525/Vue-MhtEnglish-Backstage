@@ -112,7 +112,6 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     //通过vuex state获取当前的token是否存在
     let token = store.state.token;
-    console.log(token);
     if (token === null || token === "") {
       next({
         path: "/login",

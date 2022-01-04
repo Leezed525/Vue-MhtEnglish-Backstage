@@ -109,24 +109,29 @@ export default {
                         //给予数据总数用以分页（没有这个分页组件失效）
                         this.total = result.data.total;
                     } else {
-                        //失败
-                        _this.$message({
-                            type: "error",
-                            message: result.msg,
-                            center: true,
-                            duration: 500,
-                        });
+                        // //失败
+                        // _this.$message({
+                        //     type: "error",
+                        //     message: result.msg,
+                        //     center: true,
+                        //     duration: 500,
+                        //     //请求数据错误说明没权限，跳转到首页
+                        //     onClose: function () {
+                        //         //跳转至首页
+                        //         _this.$router.replace("/");
+                        //     },
+                        // });
                     }
                 })
                 .catch((error) => {
-                    //异常
-                    _this.loading = false;
-                    _this.$message({
-                        type: "error",
-                        message: "服务器错误",
-                        center: true,
-                        duration: 500,
-                    });
+                    // //异常
+                    // _this.loading = false;
+                    // _this.$message({
+                    //     type: "error",
+                    //     message: "服务器错误",
+                    //     center: true,
+                    //     duration: 500,
+                    // });
                 });
         },
         // 条数选择

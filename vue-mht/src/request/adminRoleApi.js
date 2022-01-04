@@ -1,6 +1,13 @@
 import request from "./axios";
 import qs from "qs";
 
+const toRole = data =>{
+  return request({
+    url: "admin/system/toRole",
+    method: "get",
+  });
+}
+
 const getAllRoles = data => {
   return request({
     url: "/admin/role/getAllRoles",
@@ -78,6 +85,7 @@ const reassignPermission = data =>{
 }
 
 const AdminRoleApi = {
+  toRole,
   getAllRoles,
   getAllRolesByUserId,
   getAllAdminRole,
