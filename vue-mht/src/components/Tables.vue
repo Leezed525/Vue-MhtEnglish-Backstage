@@ -3,14 +3,14 @@
         <el-card>
             <el-table :data="tableList" style="width: 100%" height="100%" :height="400" :max-height="440" v-loading="loading" element-loading-text="加载中，请稍后..."
                 @selection-change="handleSelectionChange">
-
+                
                 <el-table-column type="selection" align="center" label="序号" width="50">
                 </el-table-column>
                 <el-table-column v-for="it in tableData.columnData" :key="it.name" :prop="it.prop" :align="it.align" :label="it.label" :width="it.width" :need="it.needFormat"
                     :formatter="formatAvailable">
                 </el-table-column>
                 <!-- 操作 -->
-                <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*80">
+                <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*100">
                     <template slot-scope="scope">
                         <el-button v-for="(it,index) in tableData.operaData.data" :key="it.label" :type="it.type" @click="btnClick(it.operafun,scope.row)" plain size="small">{{it.label}}
                         </el-button>

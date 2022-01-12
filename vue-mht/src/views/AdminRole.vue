@@ -20,7 +20,7 @@
                                 <el-button type="primary" @click="search">搜索</el-button>
                             </el-form-item>
                             <el-form-item class="admin-role-form-item">
-                                <el-button type="primary" @click="reset">重置</el-button>
+                                <el-button type="info" @click="reset">重置</el-button>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -36,7 +36,7 @@
         </div>
 
         <!-- 编辑框 -->
-        <el-dialog title="编辑用户" :visible.sync="updateAdminRoleFormVisible">
+        <el-dialog title="编辑角色" :visible.sync="updateAdminRoleFormVisible">
             <el-form :model="updateForm" label-position="left" label-width="80px" :rules="updateFormRules" ref="updataForm">
                 <el-form-item label="角色名" prop="roleName">
                     <el-input v-model="updateForm.roleName" autocomplete="off"></el-input>
@@ -67,7 +67,7 @@
             </div>
         </el-dialog>
 
-        <!-- 添加用户弹出框 -->
+        <!-- 添加角色弹出框 -->
         <el-dialog title="添加角色" :visible.sync="addAdminRoleFormVisible">
             <el-form :model="addAdminRoleForm" label-position="left" label-width="80px" :rules="addAdminRoleFormRules" ref="addAdminRoleForm">
                 <el-form-item label="角色名" prop="roleName">
@@ -94,7 +94,6 @@
 </template>
 
 <script>
-import adminUserApi from "../request/adminUserApi";
 import adminRoleApi from "../request/adminRoleApi";
 import adminPermissionApi from "../request/adminPermissionApi";
 
@@ -120,7 +119,7 @@ export default {
             updateAdminRoleFormVisible: false,
             //分配角色弹出框是否打开
             assignPermissionFormVisible: false,
-            // 添加用户弹出框是否打开
+            // 添加角色弹出框是否打开
             addAdminRoleFormVisible: false,
             //搜索表单
             queryAdminRoleForm: {
@@ -208,13 +207,13 @@ export default {
             roleSelection: [],
             //正在进行分配的id
             assigningId: 0,
-            // 添加用户表单
+            // 添加角色表单
             addAdminRoleForm: {
                 roleName: "",
                 comment: "",
                 available: true,
             },
-            // 添加用户表单规则
+            // 添加角色表单规则
             addAdminRoleFormRules: {
                 roleName: [
                     {
@@ -360,7 +359,7 @@ export default {
             _this.assignPermissionFormVisible = false;
         },
 
-        //删除用户
+        //删除角色
         deleteAdminRole(data) {
             let _this = this;
             _this
@@ -375,7 +374,7 @@ export default {
                 })
                 .catch(() => {});
         },
-        // 发送删除用户请求
+        // 发送删除角色请求
         toDelete(ids) {
             adminRoleApi
                 .deleteAdminRoleByIds(ids)

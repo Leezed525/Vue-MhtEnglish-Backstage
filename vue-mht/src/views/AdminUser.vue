@@ -28,7 +28,7 @@
                                 <el-button type="primary" @click="search">搜索</el-button>
                             </el-form-item>
                             <el-form-item class="admin-user-form-item">
-                                <el-button type="primary" @click="reset">重置</el-button>
+                                <el-button type="info" @click="reset">重置</el-button>
                             </el-form-item>
                         </el-col>
                     </el-row>

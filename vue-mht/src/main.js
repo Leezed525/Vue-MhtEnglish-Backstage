@@ -24,6 +24,10 @@ Vue.config.productionTip = false;
 Vue.prototype.$MD5 = md5;
 // 把base64放入vue的原型方便调用
 Vue.prototype.$BASE64 = Base64;
+//引入jsonviewer
+import JsonViewer from 'vue-json-viewer'
+Vue.use(JsonViewer)
+
 /* eslint-disable no-new */
 new Vue({
   el: "#app",

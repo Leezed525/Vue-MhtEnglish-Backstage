@@ -28,7 +28,7 @@
                                 <el-button type="primary" @click="search">搜索</el-button>
                             </el-form-item>
                             <el-form-item class="admin-permission-form-item">
-                                <el-button type="primary" @click="reset">重置</el-button>
+                                <el-button type="info" @click="reset">重置</el-button>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -74,8 +74,8 @@
             </div>
         </el-dialog>
 
-        <!-- 添加用户弹出框 -->
-        <el-dialog title="添加角色" :visible.sync="addAdminPermissionFormVisible">
+        <!-- 添加权限弹出框 -->
+        <el-dialog title="添加权限" :visible.sync="addAdminPermissionFormVisible">
             <el-form :model="addAdminPermissionForm" label-position="left" label-width="80px" :rules="addAdminPermissionFormRules" ref="addAdminPermissionForm">
                 <el-form-item label="权限名" prop="title">
                     <el-input v-model="addAdminPermissionForm.title" autocomplete="off"></el-input>
@@ -121,17 +121,17 @@ export default {
             adminPermissionApi.checkTitleUnique(data).then((res) => {
                 let result = res.data;
                 if (result.code == 200) {
-                    // console.log("角色名可用");
+                    // console.log("权限名可用");
                     callback();
                 } else {
-                    callback(new Error("角色名已存在"));
+                    callback(new Error("权限名已存在"));
                 }
             });
         };
         return {
             //编辑弹出框是否打开
             updateAdminPermissionFormVisible: false,
-            // 添加用户弹出框是否打开
+            // 添加权限弹出框是否打开
             addAdminPermissionFormVisible: false,
             //搜索表单
             queryAdminPermissionForm: {
@@ -172,7 +172,7 @@ export default {
                     {
                         prop: "title",
                         label: "权限名",
-                        width: 100,
+                        width: 150,
                         align: "center",
                     },
                     {
@@ -203,7 +203,6 @@ export default {
             ],
             //编辑表单
             updateForm: {
-                id: "",
                 title: "",
                 percode: "",
                 reqUrl: "",
@@ -240,19 +239,18 @@ export default {
                     },
                 ],
             },
-            //分配角色选中的选项
-            roleSelection: [],
-            // 添加用户表单
+            // 添加权限表单
             addAdminPermissionForm: {
-                roleName: "",
-                comment: "",
+                title: "",
+                percode: "",
+                reqUrl: "",
                 available: true,
             },
             addAdminPermissionFormRules: {
                 title: [
                     {
                         required: true,
-                        message: "请输入角色名",
+                        message: "请输入权限名",
                         trigger: "blur",
                     },
                     {
@@ -264,21 +262,21 @@ export default {
                     {
                         required: true,
                         message: "请输入权限地址",
-                        trigger: "change",
+                        trigger: "blur",
                     },
                 ],
                 percode: [
                     {
                         required: true,
                         message: "请输入权限编码",
-                        trigger: "change",
+                        trigger: "blur",
                     },
                 ],
                 pid: [
                     {
                         required: true,
                         message: "请输入权限编码",
-                        trigger: "change",
+                        trigger: "blur",
                     },
                 ],
             },
@@ -351,7 +349,7 @@ export default {
                 }
             });
         },
-        //删除用户
+        //删除权限
         deleteAdminPermission(data) {
             let _this = this;
             _this
@@ -366,7 +364,7 @@ export default {
                 })
                 .catch(() => {});
         },
-        // 发送删除用户请求
+        // 发送删除权限请求
         toDelete(ids) {
             adminPermissionApi
                 .deleteAdminPermissionByIds(ids)
