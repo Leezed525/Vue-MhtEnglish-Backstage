@@ -1,7 +1,9 @@
 <template>
     <div class="home">
         <el-container style="height: 100%;width: 100%;">
-            <el-header class=""> header</el-header>
+            <el-header>
+                <LeeHeader></LeeHeader>
+            </el-header>
             <el-container>
                 <el-aside width="200px">
                     <slider></slider>
@@ -14,8 +16,8 @@
                     </div>
                 </el-main>
             </el-container>
-            <el-footer>
-                footer
+            <el-footer >
+                <LeeFooter></LeeFooter>
             </el-footer>
         </el-container>
     </div>
@@ -24,10 +26,14 @@
 <script>
 // @ is an alias to /src
 import Slider from "@/components/Slider.vue";
+import LeeFooter from "@/components/LeeFooter.vue";
+import LeeHeader from "@/components/LeeHeader.vue";
 export default {
     name: "Home",
     components: {
         Slider,
+        LeeFooter,
+        LeeHeader
     },
     data() {
         return {};
@@ -65,10 +71,13 @@ export default {
 .el-tabs.el-tabs--border-card {
     box-shadow: none;
 }
-.el-header,
+.el-header{
+    background-color:#67bfeb;
+    text-align: center;
+    line-height: 60px;
+}
 .el-footer {
-    background-color: #b3c0d1;
-    color: #333;
+    background-color: #212427;
     text-align: center;
     line-height: 60px;
 }

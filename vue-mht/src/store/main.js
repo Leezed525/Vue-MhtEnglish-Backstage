@@ -11,8 +11,8 @@ const state = {
     ? localStorage.getItem("mhtToken")
     : "",
   userInfo: localStorage.getItem("mhtUserInfo")
-    ? localStorage.getItem("mhtUserInfo")
-    : "",
+    ? JSON.parse(localStorage.getItem("mhtUserInfo"))
+    : null,
   openTab: [], //所有打开的路由
   activeIndex: "/main" //激活状态
 };
@@ -33,10 +33,14 @@ const actions = {
         //获取用户信息
         userInfo = res.data;
         context.commit("SETUSERINFO", userInfo);
+        window.localStorage.setItem("mhtUserInfo",JSON.stringify(userInfo));
       })
       .catch(error => {
-        alert("服务器错误");
       });
+  },
+  logout(context){
+    window.localStorage.clear();
+    context.commit("LOGOUT");
   }
 };
 

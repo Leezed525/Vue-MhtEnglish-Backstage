@@ -120,6 +120,18 @@ const addAdminUser = data => {
   });
 };
 
+
+const changePassword = data => {
+  return request({
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    url: "admin/user/changePassWord",
+    method: "post",
+    data: qs.stringify(data)
+  });
+}
+
 var userApi = {
   login,
   toUser,
@@ -130,6 +142,7 @@ var userApi = {
   restPassword,
   reassignRoles,
   checkUsernameUnique,
-  addAdminUser
+  addAdminUser,
+  changePassword
 };
 export default userApi;

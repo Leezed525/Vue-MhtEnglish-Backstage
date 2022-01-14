@@ -73,7 +73,7 @@ export default {
             _this.loading = true
             let autoLogin = _this.loginForm.autoLogin
             let data = {
-                username:_this.loginForm.username,
+                username:_this.loginForm.username.trim(),
                 password:_this.loginForm.password.trim(),
             }
             adminUserApi.login(data).then(res => {
