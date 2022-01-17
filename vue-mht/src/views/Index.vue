@@ -10,13 +10,11 @@
                 </el-aside>
                 <el-main>
                     <div class="content">
-                        <div class="content-tab">
-                            <router-view />
-                        </div>
+                        <router-view />
                     </div>
                 </el-main>
             </el-container>
-            <el-footer >
+            <el-footer>
                 <LeeFooter></LeeFooter>
             </el-footer>
         </el-container>
@@ -33,21 +31,15 @@ export default {
     components: {
         Slider,
         LeeFooter,
-        LeeHeader
+        LeeHeader,
     },
     data() {
         return {};
     },
-    methods: {
-
-    },
-    mounted() {
-    },
-    computed: {
-
-    },
-    watch: {
-    },
+    methods: {},
+    mounted() {},
+    computed: {},
+    watch: {},
 };
 </script>
 <style scoped >
@@ -60,8 +52,8 @@ export default {
 .content {
     height: 100%;
 }
-.content-tab {
-}
+/* .content-tab {
+} */
 .content-wrap {
     height: 90%;
     border: 1px solid #dcdff7;
@@ -71,8 +63,8 @@ export default {
 .el-tabs.el-tabs--border-card {
     box-shadow: none;
 }
-.el-header{
-    background-color:#67bfeb;
+.el-header {
+    background-color: #67bfeb;
     text-align: center;
     line-height: 60px;
 }

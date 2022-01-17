@@ -186,7 +186,7 @@ export default {
             _this.queryAdminLogForm.result = "";
             _this.queryAdminLogForm.beginTime = "";
             _this.queryAdminLogForm.endTime = "";
-            _this.$refs.adminLogTable.getTableData();
+            _this.search()
         },
         // 发送条件搜索请求
         search() {
@@ -229,19 +229,20 @@ export default {
         },
         // 发送删除日志请求
         toDelete(ids) {
+            let _this = this;
             adminLogApi
                 .deleteAdminLogByIds(ids)
                 .then((res) => {
                     let result = res.data;
                     if (result.code == 200) {
-                        this.$message(result.msg);
-                        this.$refs.adminLogTable.getTableData();
+                        _this.$message(result.msg);
+                        _this.search();
                     } else {
-                        this.$message.error(result.msg);
+                        _this.$message.error(result.msg);
                     }
                 })
                 .catch((error) => {
-                    this.$message.error("服务器错误，请稍后再试");
+                    _this.$message.error("服务器错误，请稍后再试");
                 });
         },
         //批量删除

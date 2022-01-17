@@ -278,7 +278,7 @@ export default {
             _this.queryAdminUserForm.username = "";
             _this.queryAdminUserForm.nickname = "";
             _this.queryAdminUserForm.roleId = "";
-            _this.$refs.adminUserTable.getTableData();
+            _this.search();
         },
         // 发送条件搜索请求
         search() {
@@ -323,7 +323,7 @@ export default {
                             let result = res.data;
                             if (result.code == 200) {
                                 _this.$message(result.msg);
-                                this.$refs.adminUserTable.getTableData();
+                                _this.search();
                             } else {
                                 _this.$message.error(result.msg);
                             }
@@ -353,6 +353,7 @@ export default {
         },
         //发送重置请求
         toResetPassword(id) {
+            let _this = this;
             let data = {
                 id,
             };
@@ -361,14 +362,14 @@ export default {
                 .then((res) => {
                     let result = res.data;
                     if (result.code == 200) {
-                        this.$message(result.msg);
-                        this.$refs.adminUserTable.getTableData();
+                        _this.$message(result.msg);
+                        _this.search();
                     } else {
-                        this.$message.error(result.msg);
+                        _this.$message.error(result.msg);
                     }
                 })
                 .catch((error) => {
-                    this.$message.error("服务器错误，请稍后再试");
+                    _this.$message.error("服务器错误，请稍后再试");
                 });
         },
         //打开分配角色框并勾选角色所拥有的权限
@@ -456,19 +457,20 @@ export default {
         },
         // 发送删除用户请求
         toDelete(ids) {
+            let _this = this;
             adminUserApi
                 .deleteAdminUserByIds(ids)
                 .then((res) => {
                     let result = res.data;
                     if (result.code == 200) {
-                        this.$message(result.msg);
-                        this.$refs.adminUserTable.getTableData();
+                        _this.$message(result.msg);
+                        _this.search();
                     } else {
-                        this.$message.error(result.msg);
+                        _this.$message.error(result.msg);
                     }
                 })
                 .catch((error) => {
-                    this.$message.error("服务器错误，请稍后再试");
+                    _this.$message.error("服务器错误，请稍后再试");
                 });
         },
         //处理分配角色处角色选择
@@ -479,6 +481,10 @@ export default {
         batchRemove(val) {
             let ids = [];
             let _this = this;
+            if (val.length === 0) {
+                _this.$message.error("您还没有选中任一用户");
+                return false;
+            }
             _this
                 .$confirm("是否要永久删除这些系统用户", "警告", {
                     confirmButtonText: "确定",
@@ -509,7 +515,7 @@ export default {
                             let result = res.data;
                             if (result.code == 200) {
                                 _this.$message.success(result.msg);
-                                this.$refs.adminUserTable.getTableData();
+                                _this.search();
                                 _this.addAdminUserFormVisible = false;
                             } else {
                                 _this.$message.error(result.msg);
@@ -519,10 +525,7 @@ export default {
                             _this.$message.error("服务器错误，请稍后再试");
                         });
                     _this.$nextTick(() => {
-                        _this.addAdminUserForm.username = "";
-                        _this.addAdminUserForm.nickname = "";
-                        _this.addAdminUserForm.remark = "";
-                        _this.addAdminUserForm.available = true;
+                        _this.$refs["addAdminUserForm"].resetFields();
                     });
 
                     return;
@@ -531,11 +534,11 @@ export default {
         },
     },
     beforeCreate() {
-        adminUserApi.toUser().then(res =>{
-            if(res.data.code === 401){
+        adminUserApi.toUser().then((res) => {
+            if (res.data.code === 401) {
                 this.$router.replace("/");
             }
-        })
+        });
     },
     mounted() {
         //获取权限列表

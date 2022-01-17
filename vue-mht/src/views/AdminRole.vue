@@ -242,7 +242,7 @@ export default {
             let _this = this;
             _this.queryAdminRoleForm.roleName = "";
             _this.queryAdminRoleForm.comment = "";
-            _this.$refs.adminRoleTable.getTableData();
+            _this.search();
         },
         // 发送条件搜索请求
         search() {
@@ -284,7 +284,7 @@ export default {
                             let result = res.data;
                             if (result.code == 200) {
                                 _this.$message(result.msg);
-                                this.$refs.adminRoleTable.getTableData();
+                                _this.search();
                             } else {
                                 _this.$message.error(result.msg);
                             }
@@ -376,19 +376,20 @@ export default {
         },
         // 发送删除角色请求
         toDelete(ids) {
+            let _this = this;
             adminRoleApi
                 .deleteAdminRoleByIds(ids)
                 .then((res) => {
                     let result = res.data;
                     if (result.code == 200) {
-                        this.$message(result.msg);
-                        this.$refs.adminRoleTable.getTableData();
+                        _this.$message(result.msg);
+                        _this.search();
                     } else {
-                        this.$message.error(result.msg);
+                        _this.$message.error(result.msg);
                     }
                 })
                 .catch((error) => {
-                    this.$message.error("服务器错误，请稍后再试");
+                    _this.$message.error("服务器错误，请稍后再试");
                 });
         },
         //处理分配角色处角色选择
@@ -411,7 +412,7 @@ export default {
                             let result = res.data;
                             if (result.code == 200) {
                                 _this.$message.success(result.msg);
-                                this.$refs.adminRoleTable.getTableData();
+                                _this.search();
                                 _this.addAdminRoleFormVisible = false;
                             } else {
                                 _this.$message.error(result.msg);
