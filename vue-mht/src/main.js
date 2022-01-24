@@ -27,6 +27,12 @@ Vue.prototype.$BASE64 = Base64;
 //引入jsonviewer
 import JsonViewer from 'vue-json-viewer'
 Vue.use(JsonViewer)
+//引入echarts 
+import * as echarts from 'echarts';
+Vue.prototype.$echarts = echarts
+
+//引入字体
+import '@/assets/font/electronicFont.css';
 
 /* eslint-disable no-new */
 new Vue({

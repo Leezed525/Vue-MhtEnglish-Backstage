@@ -17,34 +17,30 @@
                         <div style="height: 95%;">
                             <div style="height: 100%; background-color: #fff;">
                                 <el-row style="height: 100%;" type="flex">
-                                    <el-col :span="6" style="height: 100%;">
-                                        <el-card class="card-item">
-                                            <div slot="header">图表一</div>
-                                            <div>
-                                                123
-                                            </div>
+                                    <el-col :span="8" style="height: 100%;">
+                                        <el-card class="card-item" :body-style="{height:'75%',weight:'100%'}">
+                                            <div slot="header">用户图表</div>
+                                            <user-echarts></user-echarts>
                                         </el-card>
-                                        <el-card class="card-item">
-                                            <div slot="header">图表二</div>
-                                            <div>
-                                                123
-                                            </div>
+                                        <el-card class="card-item" :body-style="{height:'75%',weight:'100%'}">
+                                            <div slot="header">用户地区分布</div>
+                                            <region-echarts></region-echarts>
                                         </el-card>
                                     </el-col>
-                                    <el-col :span="12" style="height: 100%;">
-                                        <el-row :gutter="15" style="height: 30%;">
+                                    <el-col :span="8" style="height: 100%;">
+                                        <el-row style="height: 30%;">
                                             <el-col :span="12" style="height: 100%;">
-                                                <el-card :body-style="{height:'30%'}" style="height: 90%;">
-                                                    <div slot="header">用户在线人数</div>
-                                                    <div>
-                                                        123456789
+                                                <el-card :body-style="{height:'50%'}" style="height: 95%;">
+                                                    <div class="number-title" slot="header">用户在线人数</div>
+                                                    <div class="number-content">
+                                                        123456
                                                     </div>
                                                 </el-card>
                                             </el-col>
                                             <el-col :span="12" style="height: 100%;">
-                                                <el-card :body-style="{height:'30%'}" style="height: 90%;">
-                                                    <div slot="header">收录单词</div>
-                                                    <div>
+                                                <el-card :body-style="{height:'50%'}" style="height: 95%;">
+                                                    <div class="number-title" slot="header">收录单词</div>
+                                                    <div class="number-content">
                                                         654231
                                                     </div>
                                                 </el-card>
@@ -67,18 +63,14 @@
                                             </div>
                                         </el-card>
                                     </el-col>
-                                    <el-col :span="6">
-                                        <el-card class="card-item">
-                                            <div slot="header">图表一</div>
-                                            <div>
-                                                123
-                                            </div>
+                                    <el-col :span="8" style="height: 100%;">
+                                        <el-card class="card-item" :body-style="{height:'75%',weight:'100%'}">
+                                            <div slot="header">全站单词背诵量</div>
+                                            <word-count-echarts></word-count-echarts>
                                         </el-card>
-                                        <el-card class="card-item">
-                                            <div slot="header">图表二</div>
-                                            <div>
-                                                123
-                                            </div>
+                                        <el-card class="card-item" :body-style="{height:'75%',weight:'100%'}">
+                                            <div slot="header">小程序点击量</div>
+                                            <hits-echarts></hits-echarts>
                                         </el-card>
                                     </el-col>
                                 </el-row>
@@ -93,7 +85,12 @@
 </template>
 
 <script>
+import UserEcharts from "../components/UserEcharts.vue";
+import RegionEcharts from "../components/RegionEcharts.vue";
+import WordCountEcharts from "../components/WordCountEcharts.vue";
+import HitsEcharts from "../components/HitsEcharts.vue";
 export default {
+    components: { UserEcharts, RegionEcharts },
     data() {
         return {
             userInfo: {},
@@ -101,6 +98,12 @@ export default {
         };
     },
     computed: {},
+    components: {
+        UserEcharts,
+        RegionEcharts,
+        WordCountEcharts,
+        HitsEcharts,
+    },
     methods: {
         currentTime() {
             setInterval(this.formatDate, 500);
@@ -153,10 +156,20 @@ export default {
     height: 100%;
 }
 .main-content {
-    height: 95%;
+    height: 100%;
     width: 100%;
 }
 .card-item {
     height: 50%;
+}
+.number-title {
+    text-align: center;
+}
+.number-content {
+    text-align: center;
+    font-size: 70px;
+    line-height: 80px;
+    font-family: "electronicFont";
+    color: #1071a1;
 }
 </style>
