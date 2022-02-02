@@ -124,6 +124,12 @@ export default {
                 //列头元素
                 columnData: [
                     {
+                        prop: "operatorId",
+                        label: "操作人ID",
+                        width: 100,
+                        align: "center",
+                    },
+                    {
                         prop: "operator",
                         label: "操作人",
                         width: 100,
