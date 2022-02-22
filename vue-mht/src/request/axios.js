@@ -1,14 +1,14 @@
 import axios from "axios";
 import store from "../store/main";
 import router from "../router";
-import { MessageBox, Message } from "element-ui";
+// import { Message } from "element-ui";
 
 //  让请求在浏览器中允许跨域携带cookie
 axios.defaults.withCredentials = true;
 // 使用自定义配置新建一个 axios 实例
 const service = axios.create({
   // 基础的请求地址
-  baseURL: "/api",
+  baseURL: "/mhtApi",
   // 设置超时时间 5s
   timeout: 5000
 });
@@ -36,25 +36,26 @@ service.interceptors.request.use(
 // http response 拦截器
 service.interceptors.response.use(
   response => {
+    console.log(response)
     let res = response.data;
     if (res.code === 401) {
-      Message.error({
+      Vue.$message.error({
         message: res.msg
       });
     }
     return response;
   },
   error => {
+    console.log(error);
     if (error.response) {
       switch (error.response.status) {
         case 500:
-          Message.error("服务器出错");
+          Vue.$message.error("服务器出错");
           break;
-
         case 403:
           // 返回 403 清除token信息并跳转到登录页面（token非法或token过期）
           store.commit("LOGOUT");
-          Message.error({
+          Vue.$message.error({
             message: error.response.data.msg
           });
           router.replace({
@@ -63,7 +64,6 @@ service.interceptors.response.use(
           });
       }
     }
-    console.log(error);
     return Promise.reject(error.response.data); // 返回接口返回的错误信息
   }
 );

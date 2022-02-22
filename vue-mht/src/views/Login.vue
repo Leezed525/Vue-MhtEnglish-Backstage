@@ -117,6 +117,7 @@ export default {
                     })
                 }
             }).catch(err => {
+                console.log(err)
                 _this.$message({
                     typre:"error",
                     message:"网络错误",
@@ -198,7 +199,7 @@ export default {
 </script>
 <style>
     #paper {
-        background:url("../assets/img/bg/eva1.jpg") no-repeat;
+        background:url("https://s4.ax1x.com/2022/02/21/Hv9H6e.jpg") no-repeat;
         background-position: center;
         height: 100%;
         width: 100%;

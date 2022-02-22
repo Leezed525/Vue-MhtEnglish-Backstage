@@ -21,6 +21,11 @@ const createLintingRule = () => ({
 
 module.exports = {
   context: path.resolve(__dirname, "../"),
+  externals:{
+    vue:"Vue",
+    element:'ElementUI',
+    echarts:'echarts'
+  },
   entry: {
     app: "./src/main.js"
   },
@@ -80,6 +85,16 @@ module.exports = {
           name: utils.assetsPath("fonts/[name].[hash:7].[ext]")
         }
       }
+    ],
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel',
+        query: {
+          presets: ['es2015']
+        }
+      }
     ]
   },
   node: {
@@ -94,4 +109,5 @@ module.exports = {
     tls: "empty",
     child_process: "empty"
   }
+  
 };

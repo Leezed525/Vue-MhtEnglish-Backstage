@@ -1,15 +1,15 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from "vue";
+// import Vue from "vue";
 import App from "./App";
 import router from "./router";
 //清除默认样式
 import "./assets/style/resrt.css";
 
 // 引入elementui
-import ElementUI from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
-Vue.use(ElementUI);
+// import ElementUI from "element-ui";
+// import "element-ui/lib/theme-chalk/index.css";
+// Vue.use(ElementUI);
 
 // 引入Vuex_store
 import store from "./store/main";
@@ -28,7 +28,7 @@ Vue.prototype.$BASE64 = Base64;
 import JsonViewer from 'vue-json-viewer'
 Vue.use(JsonViewer)
 //引入echarts 
-import * as echarts from 'echarts';
+// import * as echarts from 'echarts';
 Vue.prototype.$echarts = echarts
 
 //引入字体
