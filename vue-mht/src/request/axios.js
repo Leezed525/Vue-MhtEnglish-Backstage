@@ -36,26 +36,33 @@ service.interceptors.request.use(
 // http response 拦截器
 service.interceptors.response.use(
   response => {
-    console.log(response)
+    console.log(response);
     let res = response.data;
     if (res.code === 401) {
-      Vue.$message.error({
+      Vue.prototype.$message.error({
         message: res.msg
       });
+    }
+    if (res.data) {
+      if (res.data.code === -2) {
+        Vue.prototype.$message.error({
+          message: res.msg
+        });
+      }
     }
     return response;
   },
   error => {
-    console.log(error);
+    console.log(error.response);
     if (error.response) {
       switch (error.response.status) {
         case 500:
-          Vue.$message.error("服务器出错");
+          Vue.prototype.$message.error("服务器出错");
           break;
         case 403:
           // 返回 403 清除token信息并跳转到登录页面（token非法或token过期）
           store.commit("LOGOUT");
-          Vue.$message.error({
+          Vue.prototype.$message.error({
             message: error.response.data.msg
           });
           router.replace({

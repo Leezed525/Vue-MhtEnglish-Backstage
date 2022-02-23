@@ -14,7 +14,7 @@
 export default {};
 </script>
 
-<style scope>
+<style scoped>
     h2 {
         color: #fff;
     }

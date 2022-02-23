@@ -10,7 +10,7 @@ import AdminRole from "@/views/AdminRole";
 import AdminPermission from "@/views/AdminPermission";
 import Word from "@/views/Word";
 import Log from "@/views/Log";
-import Notice from "@/views/Notice";
+import Notice from "@/views/AdminNotice";
 import User from "@/views/User";
 
 
