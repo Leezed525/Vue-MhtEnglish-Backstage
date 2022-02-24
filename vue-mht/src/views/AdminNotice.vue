@@ -64,7 +64,7 @@
         <!-- 表格部分 -->
         <div class="info-table">
             <tables ref="adminNoticeTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminNoticeForm" :isSelection="false" @updateNotice="updateNotice"
-                @delete="deleteAdminLog" @formatFun="formatLogForm" @showNotice="showNotice" @addNotice="addNotice">
+                @delete="deleteAdminNotice" @formatFun="formatLogForm" @showNotice="showNotice" @addNotice="addNotice">
             </tables>
         </div>
 
@@ -485,11 +485,11 @@ export default {
             });
         },
 
-        //删除日志
-        deleteAdminLog(data) {
+        //删除公告
+        deleteAdminNotice(data) {
             let _this = this;
             _this
-                .$confirm("是否要永久删除此日志", "警告", {
+                .$confirm("是否要永久删除此公告", "警告", {
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     type: "warning",
@@ -500,11 +500,11 @@ export default {
                 })
                 .catch(() => {});
         },
-        // 发送删除日志请求
+        // 发送删除公告请求
         toDelete(ids) {
             let _this = this;
-            adminLogApi
-                .deleteAdminLogByIds(ids)
+            adminNoticeApi
+                .deleteAdminNoticeByIds(ids)
                 .then((res) => {
                     let result = res.data;
                     if (result.code == 200) {

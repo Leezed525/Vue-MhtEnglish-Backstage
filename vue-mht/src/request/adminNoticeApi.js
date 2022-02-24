@@ -33,12 +33,12 @@ const addNotice = data =>{
 }
 
 
-const deleteAdminLogByIds = data => {
+const deleteAdminNoticeByIds = data => {
   return request({
     headers: {
       "Content-Type": "application/json"
     },
-    url: "admin/log/deleteAdminLogByIds",
+    url: "admin/notice/deleteAdminNoticeByIds",
     method: "post",
     data: JSON.stringify(data)
   });
@@ -49,6 +49,7 @@ const AdminLogApi = {
     getAllNotice,
     updateNotice,
     addNotice,
+    deleteAdminNoticeByIds,
     toLog
 };
 export default AdminLogApi;
