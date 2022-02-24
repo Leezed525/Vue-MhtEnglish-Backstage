@@ -3,32 +3,34 @@
         <!-- 上方搜索框 -->
         <el-card>
             <div class="query-form">
-                <el-form :inline="true" :model="queryAdminNoticeForm" class="admin-log-form">
+                <el-form :inline="true" :model="queryAdminNoticeForm" class="admin-notice-form">
                     <el-row type="flex" align="middle">
                         <el-col :span="6" style="justify-content: center;">
-                            <el-form-item label="发布者" class="admin-log-form-item">
+                            <el-form-item label="发布者" class="admin-notice-form-item">
                                 <el-input v-model="queryAdminNoticeForm.authorUserName" placeholder="请输入发布者" @keydown.enter.native="search"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="公告标题" class="admin-log-form-item">
+                            <el-form-item label="公告标题" class="admin-notice-form-item">
                                 <el-input v-model="queryAdminNoticeForm.title" placeholder="请输入公告标题" @keydown.enter.native="search"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="公告类型" class="admin-log-form-item">
+                            <el-form-item label="公告类型" class="admin-notice-form-item">
                                 <el-select v-model="queryAdminNoticeForm.type" placeholder="请选择公告类型" clearable>
                                     <el-option label="所有人公告" value="all">
                                     </el-option>
-                                    <el-option label="管理员公告" value="adminUser">
+                                    <el-option label="管理员公告" value="adminUsers">
                                     </el-option>
-                                    <el-option label="用户公告" value="user">
+                                    <el-option label="用户公告" value="users">
+                                    </el-option>
+                                    <el-option label="新用户公告" value="newUsers">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item class="admin-log-form-item">
+                            <el-form-item class="admin-notice-form-item">
                                 <el-button type="info" @click="reset">重置</el-button>
                             </el-form-item>
                         </el-col>
@@ -36,21 +38,21 @@
                     <el-divider></el-divider>
                     <el-row type="flex" align="middle">
                         <el-col :span="9">
-                            <el-form-item label="发布时间" class="admin-log-form-item">
+                            <el-form-item label="发布时间" class="admin-notice-form-item">
                                 <el-date-picker v-model="publishTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
                                     align="right" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss">
                                 </el-date-picker>
                             </el-form-item>
                         </el-col>
                         <el-col :span="9">
-                            <el-form-item label="更新时间" class="admin-log-form-item">
+                            <el-form-item label="更新时间" class="admin-notice-form-item">
                                 <el-date-picker v-model="updateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
                                     align="right" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss">
                                 </el-date-picker>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item class="admin-log-form-item">
+                            <el-form-item class="admin-notice-form-item">
                                 <el-button type="primary" @click="search">搜索</el-button>
                             </el-form-item>
                         </el-col>
@@ -61,14 +63,14 @@
         <el-divider></el-divider>
         <!-- 表格部分 -->
         <div class="info-table">
-            <tables ref="adminLogTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminNoticeForm" :isSelection="false" @updateNotice="updateNotice"
-                @delete="deleteAdminLog" @formatFun="formatLogForm" @batchDeleteLog="batchDeleteLog" @showNotice="showNotice">
+            <tables ref="adminNoticeTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminNoticeForm" :isSelection="false" @updateNotice="updateNotice"
+                @delete="deleteAdminLog" @formatFun="formatLogForm" @showNotice="showNotice" @addNotice="addNotice">
             </tables>
         </div>
 
         <!-- 公告查看框 -->
         <el-dialog title="公告查看" :visible.sync="showContentVisible">
-            <div style="height:50vh">
+            <div style="height:50vh;overflow-Y: auto;">
                 <div>
                     <h1 class="notice-title">
                         {{showingTitle}}
@@ -95,6 +97,39 @@
                 <el-button type="primary" @click="toUpdateAdminNotice(updateNoticeForm)">保存</el-button>
             </div>
         </el-dialog>
+
+        <!-- 公告新建框 -->
+        <el-dialog title="新建公告" :visible.sync="addNoticeFormVisible" :close-on-click-modal="false">
+            <el-form :model="addNoticeForm" label-position="left" label-width="80px" :rules="addNoticeFormRules" ref="addNoticeForm">
+                <el-row type="flex">
+                    <el-col :span="12">
+                        <el-form-item label="公告标题" prop="title">
+                            <el-input v-model="addNoticeForm.title" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4"></el-col>
+                    <el-col :span="8">
+                        <el-form-item label="公告类型" prop="type">
+                            <el-select v-model="addNoticeForm.type" placeholder="请选择公告类型" clearable>
+                                <el-option label="所有人公告" value="all">
+                                </el-option>
+                                <el-option label="管理员公告" value="adminUsers">
+                                </el-option>
+                                <el-option label="用户公告" value="users">
+                                </el-option>
+                                <el-option label="新用户公告" value="newUsers">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <quill-editor ref="editor" v-model="addNoticeForm.content" :options="editorOption"></quill-editor>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="toAddAdminNotice(addNoticeForm)">新建</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -110,19 +145,29 @@ const toolbarOptions = [
     [{ header: 1 }, { header: 2 }], // 1、2 级标题-----[{ header: 1 }, { header: 2 }]
     [{ list: "ordered" }, { list: "bullet" }], // 有序、无序列表-----[{ list: 'ordered' }, { list: 'bullet' }]
     [{ indent: "-1" }, { indent: "+1" }], // 缩进-----[{ indent: '-1' }, { indent: '+1' }]
-    [{ direction: "rtl" }], // 文本方向-----[{'direction': 'rtl'}]
+    // [{ direction: "rtl" }], // 文本方向-----[{'direction': 'rtl'}]
     [{ size: ["small", false, "large", "huge"] }], // 字体大小-----[{ size: ['small', false, 'large', 'huge'] }]
     [{ header: [1, 2, 3, 4, 5, 6, false] }], // 标题-----[{ header: [1, 2, 3, 4, 5, 6, false] }]
     [{ color: [] }, { background: [] }], // 字体颜色、字体背景颜色-----[{ color: [] }, { background: [] }]
     [{ font: [] }], // 字体种类-----[{ font: [] }]
     [{ align: [] }], // 对齐方式-----[{ align: [] }]
     ["clean"], // 清除文本格式-----['clean']
-    ["video"], // 链接、图片、视频-----['link', 'image', 'video']
+    [], // 链接、图片、视频-----['link', 'image', 'video']
 ];
 
 export default {
     data() {
         return {
+            //搜索表单
+            queryAdminNoticeForm: {
+                author: "",
+                title: "",
+                type: "",
+                publishBeginTime: "",
+                publishEndTime: "",
+                updateBeginTime: "",
+                updateEndTime: "",
+            },
             //公告显示框
             showContentVisible: false,
             //当前显示的公告的标题
@@ -137,7 +182,6 @@ export default {
                 theme: "snow",
                 // disabled:true,
             },
-
             //编辑弹出框是否打开
             updateNoticeFormVisible: false,
             //编辑公告表单
@@ -146,7 +190,6 @@ export default {
                 content: "",
                 available: "",
             },
-
             //富文本编辑器设置
             editorOption: {
                 //  富文本编辑器配置
@@ -166,15 +209,30 @@ export default {
                     },
                 ],
             },
-            //搜索表单
-            queryAdminNoticeForm: {
-                author: "",
+            //添加表单显示
+            addNoticeFormVisible: false,
+            //添加表单内容
+            addNoticeForm: {
                 title: "",
+                content: "",
                 type: "",
-                publishBeginTime: "",
-                publishEndTime: "",
-                updateBeginTime: "",
-                updateEndTime: "",
+            },
+            //添加表单校验规则
+            addNoticeFormRules: {
+                title: [
+                    {
+                        required: true,
+                        message: "必须要有标题",
+                        trigger: "blur",
+                    },
+                ],
+                type: [
+                    {
+                        required: true,
+                        message: "请选择公告类型",
+                        trigger: "blur",
+                    },
+                ],
             },
             //表格数据
             tableData: {
@@ -223,11 +281,13 @@ export default {
                     {
                         prop: "cancel",
                         label: "是否删除",
+                        width: 100,
                         align: "center",
                     },
                     {
                         prop: "available",
                         label: "是否发布",
+                        width: 100,
                         align: "center",
                     },
                     {
@@ -245,6 +305,11 @@ export default {
                         label: "发布者",
                         align: "center",
                     },
+                    {
+                        prop: "type",
+                        label: "类型",
+                        align: "center",
+                    },
                 ],
             },
             //表格后操作按钮(一般是批量操作按钮)
@@ -254,12 +319,6 @@ export default {
                     type: "primary",
                     label: "添加公告",
                     operafun: "addNotice",
-                },
-                {
-                    id: 2,
-                    type: "danger",
-                    label: "批量删除",
-                    operafun: "batchDeleteLog",
                 },
             ],
             JsonValue: "",
@@ -329,7 +388,7 @@ export default {
             this.queryAdminNoticeForm.publishEndTime = this.publishTime[1];
             this.queryAdminNoticeForm.updateBeginTime = this.updateTime[0];
             this.queryAdminNoticeForm.updateEndTime = this.updateTime[1];
-            this.$refs.adminLogTable.getTableData();
+            this.$refs.adminNoticeTable.getTableData();
         },
         //表格数据格式化
         formatLogForm(row, column, value, callback) {
@@ -347,6 +406,17 @@ export default {
                     value = "未发布";
                 }
             }
+            if (column.property === "type") {
+                if (value === "all") {
+                    value = "所有人公告";
+                } else if (value === "adminUsers") {
+                    value = "管理员公告";
+                } else if (value === "users") {
+                    value = "用户公告";
+                } else if (value === "newUsers") {
+                    value = "新用户公告";
+                }
+            }
             callback(value);
         },
         //更新公告
@@ -359,12 +429,30 @@ export default {
         },
         //去更新公告
         toUpdateAdminNotice(notice) {
-            console.log(notice);
             let _this = this;
             if (notice.available) {
-                _this.$alert("当前公告已经发布,无法推送给已经看过该公告的人");
+                _this.$alert("请注意:当前公告已经发布");
             }
+            _this.$refs["updateNoticeForm"].validate((valid) => {
+                if (valid) {
+                    adminNoticeApi.updateNotice(notice).then((res) => {
+                        if (res.data.code === 200) {
+                            _this.$message.success(res.data.msg);
+                            _this.updateNoticeFormVisible = false;
+                            _this.search();
+                        } else {
+                            _this.$message.error(res.data.msg);
+                        }
+                    });
+                }
+            });
         },
+        addNotice() {
+            console.log("add");
+            let _this = this;
+            _this.addNoticeFormVisible = true;
+        },
+
         //删除日志
         deleteAdminLog(data) {
             let _this = this;
@@ -398,26 +486,6 @@ export default {
                     _this.$message.error("服务器错误,请稍后再试");
                 });
         },
-        //批量删除
-        batchDeleteLog(val) {
-            let ids = [];
-            let _this = this;
-            _this
-                .$confirm("是否要永久删除这些日志", "警告", {
-                    confirmButtonText: "确定",
-                    cancelButtonText: "取消",
-                    type: "warning",
-                })
-                .then(() => {
-                    //todelete
-                    val.forEach((item) => {
-                        ids.push(item.id);
-                    });
-                    _this.toDelete(ids);
-                })
-                .catch(() => {});
-        },
-
         // 公告查看
         showNotice(data) {
             let _this = this;
@@ -440,15 +508,15 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .query-form {
     width: 100%;
 }
 
-.admin-log-form {
+.admin-notice-form {
     width: 100%;
 }
-.admin-log-form-item {
+.admin-notice-form-item {
     margin: 0 auto;
 }
 .notice-title {
