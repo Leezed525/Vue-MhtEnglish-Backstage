@@ -230,7 +230,7 @@ export default {
                     {
                         required: true,
                         message: "请选择公告类型",
-                        trigger: "blur",
+                        trigger: "change",
                     },
                 ],
             },
@@ -253,8 +253,13 @@ export default {
                             operafun: "updateNotice",
                         },
                         {
-                            label: "撤销",
+                            label: "发布",
                             type: "warning",
+                            operafun: "publish",
+                        },
+                        {
+                            label: "撤销",
+                            type: "info",
                             operafun: "cancel",
                         },
                         {
@@ -278,9 +283,21 @@ export default {
                         width: 100,
                         align: "center",
                     },
+
                     {
-                        prop: "cancel",
-                        label: "是否删除",
+                        prop: "createtime",
+                        label: "创建时间",
+                        align: "center",
+                    },
+                    {
+                        prop: "author.username",
+                        label: "创建者",
+                        width: 100,
+                        align: "center",
+                    },
+                    {
+                        prop: "type",
+                        label: "类型",
                         width: 100,
                         align: "center",
                     },
@@ -293,21 +310,6 @@ export default {
                     {
                         prop: "publishTime",
                         label: "发布时间",
-                        align: "center",
-                    },
-                    {
-                        prop: "updateTime",
-                        label: "更新时间",
-                        align: "center",
-                    },
-                    {
-                        prop: "author.username",
-                        label: "发布者",
-                        align: "center",
-                    },
-                    {
-                        prop: "type",
-                        label: "类型",
                         align: "center",
                     },
                 ],
@@ -392,17 +394,16 @@ export default {
         },
         //表格数据格式化
         formatLogForm(row, column, value, callback) {
-            if (column.property === "cancel") {
-                if (value) {
-                    value = "已撤销";
-                } else {
-                    value = "未撤销";
-                }
-            }
             if (column.property === "available") {
                 if (value) {
                     value = "已发布";
                 } else {
+                    value = "未发布";
+                }
+            }
+            if (column.property === "publishTime") {
+                console.log(value)
+                if (value === null) {
                     value = "未发布";
                 }
             }
@@ -422,6 +423,14 @@ export default {
         //更新公告
         updateNotice(data) {
             let _this = this;
+            if (data.available) {
+                _this.$msgbox({
+                    title: "请注意",
+                    message: "当前公告已经发布无法编辑,请先撤回后在编辑",
+                    type: "error",
+                });
+                return false;
+            }
             _this.updateNoticeForm.title = data.title;
             _this.updateNoticeForm.content = data.content;
             _this.updateNoticeForm.available = data.available;
@@ -430,9 +439,6 @@ export default {
         //去更新公告
         toUpdateAdminNotice(notice) {
             let _this = this;
-            if (notice.available) {
-                _this.$alert("请注意:当前公告已经发布");
-            }
             _this.$refs["updateNoticeForm"].validate((valid) => {
                 if (valid) {
                     adminNoticeApi.updateNotice(notice).then((res) => {
@@ -451,6 +457,32 @@ export default {
             console.log("add");
             let _this = this;
             _this.addNoticeFormVisible = true;
+        },
+        toAddAdminNotice(notice) {
+            let _this = this;
+            _this.$refs["addNoticeForm"].validate((valid) => {
+                if (valid) {
+                    _this.$msgbox({
+                        title: "请注意",
+                        message: "公告一旦创建后不能修改公告类型",
+                        type: "warning",
+                        callback(action) {
+                            if (action === "confirm") {
+                                adminNoticeApi.addNotice(notice).then((res) => {
+                                    console.log(res);
+                                    if (res.data.code === 200) {
+                                        _this.addNoticeFormVisible = false;
+                                        _this.$message.success(res.data.msg);
+                                        _this.search();
+                                    } else {
+                                        _this.$message.error(res.data.msg);
+                                    }
+                                });
+                            }
+                        },
+                    });
+                }
+            });
         },
 
         //删除日志

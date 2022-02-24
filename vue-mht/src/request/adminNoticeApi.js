@@ -24,6 +24,14 @@ const updateNotice = data =>{
   })
 }
 
+const addNotice = data =>{
+  return new request({
+    url: "/admin/notice/addNotice",
+    method: "post",
+    data: data
+  })
+}
+
 
 const deleteAdminLogByIds = data => {
   return request({
@@ -40,6 +48,7 @@ const deleteAdminLogByIds = data => {
 const AdminLogApi = {
     getAllNotice,
     updateNotice,
+    addNotice,
     toLog
 };
 export default AdminLogApi;
