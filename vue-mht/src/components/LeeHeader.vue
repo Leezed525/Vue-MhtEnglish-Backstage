@@ -45,7 +45,7 @@
         </el-dialog>
 
         <!-- 公告栏 -->
-        <el-dialog title="收货地址" :visible.sync="NoitceListVisible">
+        <el-dialog title="公告列表" :visible.sync="NoitceListVisible">
             <el-table :data="NoticeList">
                 <el-table-column property="status" label="状态" width="100" align="center" :formatter="formatFun"></el-table-column>
                 <el-table-column property="publishTime" label="发布日期" width="200" align="center"></el-table-column>

@@ -93,7 +93,6 @@
                 <quill-editor ref="editor" v-model="updateNoticeForm.content" :options="editorOption"></quill-editor>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="success" v-if="!updateNoticeForm.avialable" @click="publish(updateNoticeForm)">发布</el-button>
                 <el-button type="primary" @click="toUpdateAdminNotice(updateNoticeForm)">保存</el-button>
             </div>
         </el-dialog>
@@ -430,6 +429,7 @@ export default {
                 });
                 return false;
             }
+            _this.updateNoticeForm.id = data.id;
             _this.updateNoticeForm.title = data.title;
             _this.updateNoticeForm.content = data.content;
             _this.updateNoticeForm.available = data.available;
