@@ -470,6 +470,10 @@ export default {
                                     if (res.data.code === 200) {
                                         _this.addNoticeFormVisible = false;
                                         _this.$message.success(res.data.msg);
+                                        _this.$refs[
+                                            "addNoticeForm"
+                                        ].resetFields();
+                                        _this.addNoticeForm.content = "";
                                         _this.search();
                                     } else {
                                         _this.$message.error(res.data.msg);
@@ -492,12 +496,11 @@ export default {
                     type: "warning",
                 })
                 .then(() => {
-                    //todelete
                     _this.toDelete([data.id]);
                 })
                 .catch(() => {});
         },
-        // 发送删除公告请求
+        // 发送删除公告
         toDelete(ids) {
             let _this = this;
             adminNoticeApi

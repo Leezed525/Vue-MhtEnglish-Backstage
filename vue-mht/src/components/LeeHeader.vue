@@ -8,7 +8,7 @@
             </el-col>
             <el-col :span="19"></el-col>
             <el-col :span="1" @click.native="NoitceListVisible = true">
-                <i  class="el-icon-s-promotion" style="font-size:25px">
+                <i class="el-icon-s-promotion" style="font-size:25px">
                     <el-badge :value="3" />
                 </i>
             </el-col>
@@ -47,6 +47,7 @@
         <!-- 公告栏 -->
         <el-dialog title="收货地址" :visible.sync="NoitceListVisible">
             <el-table :data="NoticeList">
+                <el-table-column property="status" label="状态" width="100" align="center" :formatter="formatFun"></el-table-column>
                 <el-table-column property="publishTime" label="发布日期" width="200" align="center"></el-table-column>
                 <el-table-column property="title" label="标题" width="200" align="center"></el-table-column>
                 <el-table-column property="author.nickname" label="作者" align="center"></el-table-column>
@@ -56,18 +57,19 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- 公告查看栏 -->
             <el-dialog title="公告查看" :visible.sync="showNoticeVisible" append-to-body>
                 <div style="height:50vh;overflow-Y: auto;">
                     <div>
                         <h1 class="notice-title">
-                            {{showingNoticeTitle}}
+                            {{showingNotice.title}}
                         </h1>
                         <br />
                     </div>
-                    <quill-editor ref="showingDialog" v-model="showingNoticeContent" :options="showingOption"></quill-editor>
+                    <quill-editor ref="showingDialog" v-model="showingNotice.content" :options="showingOption"></quill-editor>
                 </div>
                 <div slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="showNoticeVisible = true">我已确认</el-button>
+                    <el-button type="primary" @click="confirmNotice">我已确认</el-button>
                 </div>
             </el-dialog>
         </el-dialog>
@@ -147,10 +149,12 @@ export default {
                 theme: "snow",
                 // disabled:true,
             },
-            //当前正在查看的公告标题
-            showingNoticeTitle: "123",
-            //当前正在查看的公告内容
-            showingNoticeContent: "",
+            //当前正在查看的公告
+            showingNotice: {
+                id: 0,
+                title: "",
+                content: "",
+            },
         };
     },
     methods: {
@@ -198,12 +202,40 @@ export default {
             _this.$store.dispatch("logout");
             _this.$router.replace({ path: "/login" });
         },
-        //
-        showNotice(data){
+        //表格数据格式化函数
+        formatFun(row, column, value) {
+            if (value > 0) {
+                return "已读";
+            } else {
+                return "未读";
+            }
+        },
+        //获取公告
+        getNotice() {
+            let _this = this
+            adminNoticeApi.getAdminNoticeById().then((res) => {
+                console.log(res);
+                _this.NoticeList = res.data.data;
+            });
+        },
+        //显示公告
+        showNotice(data) {
             let _this = this;
-            _this.showingNoticeTitle = data.title
-            _this.showingNoticeContent = data.content
-            _this.showNoticeVisible = true
+            _this.showingNotice = data;
+            _this.showNoticeVisible = true;
+        },
+        //确认公告
+        confirmNotice() {
+            let _this = this;
+            adminNoticeApi.confirmNotice(_this.showingNotice).then((res) => {
+                if (res.data.code === 200) {
+                    _this.$message.success(res.data.msg);
+                    _this.showNoticeVisible = false;
+                    _this.getNotice()
+                } else {
+                    _this.$message.error(res.data.msg);
+                }
+            });
         },
         //初始化发送websocket请求
         init() {
@@ -222,10 +254,7 @@ export default {
         onOpen() {
             let _this = this;
             console.log("WebSocket连接成功");
-            adminNoticeApi.getAllNotice().then((res) => {
-                console.log(res);
-                _this.NoticeList = res.data.data.list;
-            });
+            _this.getNotice()
         },
         onError() {
             console.log("连接出错");

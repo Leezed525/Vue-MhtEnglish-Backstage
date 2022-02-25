@@ -60,6 +60,21 @@ const cancelNotice = data =>{
   })
 }
 
+const getAdminNoticeById = () =>{
+  return new request({
+    url: "/admin/notice/getAdminNoticeById",
+    method: "post"
+  })
+}
+const confirmNotice = (data) =>{
+  return new request({
+    url: "/admin/notice/confirmNotice",
+    method: "post",
+    data: data
+  })
+}
+
+
 
 const AdminLogApi = {
     getAllNotice,
@@ -68,6 +83,8 @@ const AdminLogApi = {
     deleteAdminNoticeByIds,
     publishNotice,
     cancelNotice,
+    getAdminNoticeById,
+    confirmNotice,
     toLog
 };
 export default AdminLogApi;

@@ -6,7 +6,7 @@
                 <el-table-column v-if="isSelection" type="selection" align="center" label="序号" width="50">
                 </el-table-column>
                 <el-table-column v-for="it in tableData.columnData" :key="it.name" :prop="it.prop" :align="it.align" :label="it.label" :width="it.width" :need="it.needFormat"
-                    :formatter="formatAvailable">
+                    :formatter="formatFun">
                 </el-table-column>
                 <!-- 操作 -->
                 <el-table-column v-if="tableData.operaData.isShow" fixed="right" label="操作" align="center" :width="tableData.operaData.data.length*100">
@@ -156,7 +156,7 @@ export default {
             // this.$emit("click_" + (idx + 1), e);
             this.$emit(fun, data);
         },
-        formatAvailable(row, column, value) {
+        formatFun(row, column, value) {
             //检查有没有给table组件绑定format方法
             let finalValue;
             if (this.$listeners["formatFun"]) {
