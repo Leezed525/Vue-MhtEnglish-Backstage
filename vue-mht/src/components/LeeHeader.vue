@@ -94,7 +94,8 @@ export default {
         };
         return {
             //websocketURL
-            path: "wss://localhost:8080/mhtEnglish/adminNoticeSocket/root",
+            // path: "wss://www.leezed525.top:8088/mhtEnglish/adminNoticeSocket/",
+            path: "ws://localhost:8080/mhtEnglish/adminNoticeSocket/",
             //头像地址
             avatar: require("@/assets/img/icon/icon6.png"),
             //修改密码弹窗框是否显示
@@ -284,7 +285,7 @@ export default {
             if (typeof WebSocket === "undefined") {
                 _this.$alert("您的浏览器不支持websocket");
             } else {
-                _this.socket = new WebSocket(_this.path);
+                _this.socket = new WebSocket(_this.path + _this.userInfo.username);
                 _this.socket.onopen = _this.onOpen;
                 _this.socket.onerror = _this.onError;
                 _this.socket.onmessage = _this.getMessage;
