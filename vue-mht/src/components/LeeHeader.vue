@@ -1,18 +1,31 @@
 <template>
-    <header>
-        <div>
-            MHTEnglish后台管理系统
-        </div>
-        <div class="opt-wrapper">
-            <el-dropdown :hide-on-click="false">
-                <span class="el-dropdown-link"><img :src="avatar" alt="" class="avatar" /></span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item divided @click.native="changePassword()"> <i class="el-icon-info"></i>修改密码 </el-dropdown-item>
-                    <el-dropdown-item divided @click.native="logOut()"><i class="el-icon-switch-button"></i>退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
-        </div>
-        <!-- 修改密码 -->
+    <header style="width: 100%;">
+        <el-row style="width: 100%;" type="flex">
+            <el-col :span="3">
+                <div>
+                    MHTEnglish后台管理系统
+                </div>
+            </el-col>
+            <el-col :span="19"></el-col>
+            <el-col :span="1" @click.native="NoitceListVisible = true">
+                <i  class="el-icon-s-promotion" style="font-size:25px">
+                    <el-badge :value="3" />
+                </i>
+            </el-col>
+            <el-col :span="1">
+                <div class="opt-wrapper">
+                    <el-dropdown :hide-on-click="false">
+                        <span class="el-dropdown-link"><img :src="avatar" alt="" class="avatar" /></span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item divided @click.native="changePassword()"> <i class="el-icon-info"></i>修改密码 </el-dropdown-item>
+                            <el-dropdown-item divided @click.native="logOut()"><i class="el-icon-switch-button"></i>退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </el-col>
+        </el-row>
+
+        <!-- 修改密码框 -->
         <el-dialog title="修改密码" :visible.sync="confirmPasswordFormVisable" width="30%" :close-on-click-modal="false">
             <el-form :model="changePasswordForm" label-position="left" :rules="changePasswordFormRules" ref="changePasswordForm">
                 <el-form-item label="原密码" prop="oldPassword">
@@ -30,12 +43,41 @@
                 <el-button type="primary" @click="toChangePassword()">确 定</el-button>
             </div>
         </el-dialog>
+
+        <!-- 公告栏 -->
+        <el-dialog title="收货地址" :visible.sync="NoitceListVisible">
+            <el-table :data="NoticeList">
+                <el-table-column property="publishTime" label="发布日期" width="200" align="center"></el-table-column>
+                <el-table-column property="title" label="标题" width="200" align="center"></el-table-column>
+                <el-table-column property="author.nickname" label="作者" align="center"></el-table-column>
+                <el-table-column fixed="right" label="操作" width="100">
+                    <template slot-scope="scope">
+                        <el-button @click="showNotice(scope.row)" type="text" size="small">查看</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-dialog title="公告查看" :visible.sync="showNoticeVisible" append-to-body>
+                <div style="height:50vh;overflow-Y: auto;">
+                    <div>
+                        <h1 class="notice-title">
+                            {{showingNoticeTitle}}
+                        </h1>
+                        <br />
+                    </div>
+                    <quill-editor ref="showingDialog" v-model="showingNoticeContent" :options="showingOption"></quill-editor>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="showNoticeVisible = true">我已确认</el-button>
+                </div>
+            </el-dialog>
+        </el-dialog>
     </header>
 
 </template>
 
 <script>
 import adminUserApi from "../request/adminUserApi";
+import adminNoticeApi from "@/request/adminNoticeApi";
 
 export default {
     data() {
@@ -51,13 +93,15 @@ export default {
 
         return {
             avatar: require("@/assets/img/icon/icon6.png"),
-            //展示表单
+            //修改密码弹窗框是否显示
             confirmPasswordFormVisable: false,
+            //修改密码表单
             changePasswordForm: {
                 oldPassword: "",
                 newPassword: "",
                 rePassword: "",
             },
+            //修改密码表单校验规则
             changePasswordFormRules: {
                 oldPassword: [
                     {
@@ -87,14 +131,36 @@ export default {
                 ],
                 rePassword: [{ validator: checkRePassword, trigger: "blur" }],
             },
+            socket: "",
+            userInfo: "",
+            //公告列表是否显示
+            NoitceListVisible: false,
+            //公告数据
+            NoticeList: [],
+            // 公告内容显示栏
+            showNoticeVisible: false,
+            //查看编辑框设置
+            showingOption: {
+                modules: {
+                    toolbar: [],
+                },
+                theme: "snow",
+                // disabled:true,
+            },
+            //当前正在查看的公告标题
+            showingNoticeTitle: "123",
+            //当前正在查看的公告内容
+            showingNoticeContent: "",
         };
     },
     methods: {
+        //修改密码弹出框打开
         changePassword() {
             console.log("changePassword");
             let _this = this;
             _this.confirmPasswordFormVisable = true;
         },
+        //发送请求去修改密码
         toChangePassword() {
             let _this = this;
             console.log(_this);
@@ -108,7 +174,6 @@ export default {
                     adminUserApi.changePassword(data).then((res) => {
                         let result = res.data;
                         if (result.code == 200) {
-                            
                             _this.$message({
                                 message: "修改成功,请重新登录",
                                 type: "success",
@@ -127,11 +192,54 @@ export default {
                 }
             });
         },
+        //登出
         logOut() {
             let _this = this;
             _this.$store.dispatch("logout");
-            _this.$router.replace({ path:'/login'})
+            _this.$router.replace({ path: "/login" });
         },
+        //
+        showNotice(data){
+            let _this = this;
+            _this.showingNoticeTitle = data.title
+            _this.showingNoticeContent = data.content
+            _this.showNoticeVisible = true
+        },
+        //初始化发送websocket请求
+        init() {
+            let _this = this;
+            _this.userInfo = _this.$store.state.userInfo;
+            if (typeof WebSocket === "undefined") {
+                _this.$alert("您的浏览器不支持websocket");
+            } else {
+                _this.socket = new WebSocket(
+                    "ws://localhost:8080/mhtEnglish/noticeSocket/root"
+                );
+                _this.socket.onopen = _this.onOpen;
+                _this.socket.onerror = _this.onError;
+            }
+        },
+        onOpen() {
+            let _this = this;
+            console.log("WebSocket连接成功");
+            adminNoticeApi.getAllNotice().then((res) => {
+                console.log(res);
+                _this.NoticeList = res.data.data.list;
+            });
+        },
+        onError() {
+            console.log("连接出错");
+        },
+        onClose() {
+            console.log("WebSocket关闭");
+        },
+    },
+    mounted() {
+        let _this = this;
+        _this.init();
+    },
+    destroyed() {
+        _this.socket.onclose = _this.onClose;
     },
 };
 </script>
@@ -151,6 +259,10 @@ header {
     width: 40px;
     border-radius: 50%;
     cursor: pointer;
+}
+.notice-title {
+    font-size: 40px;
+    text-align: center;
 }
 </style>
 
