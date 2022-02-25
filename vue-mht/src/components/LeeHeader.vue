@@ -9,7 +9,7 @@
             <el-col :span="19"></el-col>
             <el-col :span="1" @click.native="NoitceListVisible = true">
                 <i class="el-icon-s-promotion" style="font-size:25px">
-                    <el-badge :value="3" />
+                    <el-badge v-if="needConfirmNoticeCount > 0" :value="needConfirmNoticeCount" />
                 </i>
             </el-col>
             <el-col :span="1">
@@ -92,8 +92,10 @@ export default {
                 callback();
             }
         };
-
         return {
+            //websocketURL
+            path: "wss://localhost:8080/mhtEnglish/adminNoticeSocket/root",
+            //头像地址
             avatar: require("@/assets/img/icon/icon6.png"),
             //修改密码弹窗框是否显示
             confirmPasswordFormVisable: false,
@@ -157,6 +159,18 @@ export default {
             },
         };
     },
+    computed: {
+        needConfirmNoticeCount() {
+            let _this = this;
+            let count = 0;
+            _this.NoticeList.forEach((item) => {
+                if (item.status === 0) {
+                    count += 1;
+                }
+            });
+            return count;
+        },
+    },
     methods: {
         //修改密码弹出框打开
         changePassword() {
@@ -212,7 +226,7 @@ export default {
         },
         //获取公告
         getNotice() {
-            let _this = this
+            let _this = this;
             adminNoticeApi.getAdminNoticeById().then((res) => {
                 console.log(res);
                 _this.NoticeList = res.data.data;
@@ -231,11 +245,37 @@ export default {
                 if (res.data.code === 200) {
                     _this.$message.success(res.data.msg);
                     _this.showNoticeVisible = false;
-                    _this.getNotice()
+                    _this.getNotice();
                 } else {
                     _this.$message.error(res.data.msg);
                 }
             });
+        },
+
+        //websocket获得发布消息
+        publishNotice(notice) {
+            let _this = this;
+            _this.$message.info("有新的公告");
+            let data = {
+                status: 0,
+                id: notice.id,
+                publishTime: notice.publishTime,
+                title: notice.title,
+                content: notice.content,
+                author: notice.author,
+            };
+            _this.NoticeList.unshift(data);
+        },
+        //websocket获得撤回消息
+        cancelNotice(notice) {
+            let _this = this;
+            _this.$message.info("有公告被撤回了");
+            for (let i = 0; i < _this.NoticeList.length; i += 1) {
+                if (_this.NoticeList[i].id === notice.id) {
+                    _this.NoticeList.splice(i, 1);
+                    break;
+                }
+            }
         },
         //初始化发送websocket请求
         init() {
@@ -244,23 +284,31 @@ export default {
             if (typeof WebSocket === "undefined") {
                 _this.$alert("您的浏览器不支持websocket");
             } else {
-                _this.socket = new WebSocket(
-                    "ws://localhost:8080/mhtEnglish/noticeSocket/root"
-                );
+                _this.socket = new WebSocket(_this.path);
                 _this.socket.onopen = _this.onOpen;
                 _this.socket.onerror = _this.onError;
+                _this.socket.onmessage = _this.getMessage;
             }
         },
         onOpen() {
             let _this = this;
             console.log("WebSocket连接成功");
-            _this.getNotice()
+            _this.getNotice();
         },
         onError() {
             console.log("连接出错");
         },
         onClose() {
             console.log("WebSocket关闭");
+        },
+        getMessage(res) {
+            let _this = this;
+            let notice = JSON.parse(res.data);
+            if (notice.operation === "publish") {
+                _this.publishNotice(notice);
+            } else {
+                _this.cancelNotice(notice);
+            }
         },
     },
     mounted() {
