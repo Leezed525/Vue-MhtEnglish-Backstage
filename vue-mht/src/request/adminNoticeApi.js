@@ -34,7 +34,7 @@ const addNotice = data =>{
 
 
 const deleteAdminNoticeByIds = data => {
-  return request({
+  return new request({
     headers: {
       "Content-Type": "application/json"
     },
@@ -44,12 +44,30 @@ const deleteAdminNoticeByIds = data => {
   });
 };
 
+const publishNotice = data =>{
+  return new request({
+    url: "/admin/notice/publishNotice",
+    method: "post",
+    data: data
+  })
+}
+
+const cancelNotice = data =>{
+  return new request({
+    url: "/admin/notice/cancelNotice",
+    method: "post",
+    data: data
+  })
+}
+
 
 const AdminLogApi = {
     getAllNotice,
     updateNotice,
     addNotice,
     deleteAdminNoticeByIds,
+    publishNotice,
+    cancelNotice,
     toLog
 };
 export default AdminLogApi;

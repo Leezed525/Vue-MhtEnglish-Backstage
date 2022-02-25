@@ -64,7 +64,7 @@
         <!-- 表格部分 -->
         <div class="info-table">
             <tables ref="adminNoticeTable" :tableData="tableData" :operationData="operationData" :queryData="queryAdminNoticeForm" :isSelection="false" @updateNotice="updateNotice"
-                @delete="deleteAdminNotice" @formatFun="formatLogForm" @showNotice="showNotice" @addNotice="addNotice">
+                @delete="deleteAdminNotice" @formatFun="formatLogForm" @showNotice="showNotice" @addNotice="addNotice" @publish="publish" @cancel="cancel">
             </tables>
         </div>
 
@@ -402,7 +402,6 @@ export default {
                 }
             }
             if (column.property === "publishTime") {
-                console.log(value)
                 if (value === null) {
                     value = "未发布";
                 }
@@ -454,7 +453,6 @@ export default {
             });
         },
         addNotice() {
-            console.log("add");
             let _this = this;
             _this.addNoticeFormVisible = true;
         },
@@ -469,7 +467,6 @@ export default {
                         callback(action) {
                             if (action === "confirm") {
                                 adminNoticeApi.addNotice(notice).then((res) => {
-                                    console.log(res);
                                     if (res.data.code === 200) {
                                         _this.addNoticeFormVisible = false;
                                         _this.$message.success(res.data.msg);
@@ -527,6 +524,52 @@ export default {
             _this.$nextTick(() => {
                 _this.$refs.showingDialog.quill.enable(false);
             });
+        },
+        //公告发布
+        publish(data) {
+            let _this = this;
+            if (data.available) {
+                _this.$alert("当前公告已经发布,无需在发布");
+                return false;
+            }
+            _this
+                .$confirm("您确定要发布这个公告嘛？", "提示", {
+                    type: "warning",
+                })
+                .then(() => {
+                    adminNoticeApi.publishNotice(data).then((res) => {
+                        if (res.data.code === 200) {
+                            _this.$message.success(res.data.msg);
+                            _this.search();
+                        } else {
+                            _this.$message.error(res.data.msg);
+                        }
+                    });
+                })
+                .catch(() => {});
+        },
+        //公告撤销
+        cancel(data) {
+            let _this = this;
+            if (!data.available) {
+                _this.$alert("当前公告还未发布,无需撤销");
+                return false;
+            }
+            _this
+                .$confirm("您确定要撤回这个公告嘛？", "提示", {
+                    type: "warning",
+                })
+                .then(() => {
+                    adminNoticeApi.cancelNotice(data).then((res) => {
+                        if (res.data.code === 200) {
+                            _this.$message.success(res.data.msg);
+                            _this.search();
+                        } else {
+                            _this.$message.error(res.data.msg);
+                        }
+                    });
+                })
+                .catch(() => {});
         },
     },
     beforeCreate() {
