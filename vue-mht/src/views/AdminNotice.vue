@@ -18,13 +18,9 @@
                         <el-col :span="6">
                             <el-form-item label="公告类型" class="admin-notice-form-item">
                                 <el-select v-model="queryAdminNoticeForm.type" placeholder="请选择公告类型" clearable>
-                                    <el-option label="所有人公告" value="all">
-                                    </el-option>
                                     <el-option label="管理员公告" value="adminUsers">
                                     </el-option>
                                     <el-option label="用户公告" value="users">
-                                    </el-option>
-                                    <el-option label="新用户公告" value="newUsers">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
@@ -110,13 +106,9 @@
                     <el-col :span="8">
                         <el-form-item label="公告类型" prop="type">
                             <el-select v-model="addNoticeForm.type" placeholder="请选择公告类型" clearable>
-                                <el-option label="所有人公告" value="all">
-                                </el-option>
                                 <el-option label="管理员公告" value="adminUsers">
                                 </el-option>
                                 <el-option label="用户公告" value="users">
-                                </el-option>
-                                <el-option label="新用户公告" value="newUsers">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -496,18 +488,20 @@ export default {
                     type: "warning",
                 })
                 .then(() => {
-                    _this.toDelete([data.id]);
+                    _this.toDelete(data);
                 })
                 .catch(() => {});
         },
         // 发送删除公告
-        toDelete(ids) {
+        toDelete(data) {
             let _this = this;
             adminNoticeApi
-                .deleteAdminNoticeByIds(ids)
+                .deleteAdminNotice(data)
                 .then((res) => {
                     let result = res.data;
                     if (result.code == 200) {
+                        _this.$message.success(result.msg)
+                        _this.search()
                         _this.$message(result.msg);
                         _this.search();
                     } else {
@@ -576,7 +570,7 @@ export default {
         },
     },
     beforeCreate() {
-        adminLogApi.toLog().then((res) => {
+        adminNoticeApi.toNotice().then((res) => {
             if (res.data.code === 401) {
                 this.$router.replace("/");
             }
