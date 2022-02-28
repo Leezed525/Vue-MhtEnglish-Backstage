@@ -5,17 +5,12 @@
 </template>
 
 <script>
+import adminMainApi from "@/request/adminMainApi";
+
 export default {
     data() {
-        return {};
-    },
-    methods: {
-        myEcharts() {
-            var chartDom = this.$refs.user;
-            var myChart = this.$echarts.init(chartDom);
-            var option;
-
-            option = {
+        return {
+            option: {
                 tooltip: {
                     trigger: "axis",
                 },
@@ -44,24 +39,46 @@ export default {
                         name: "单词背诵量",
                         type: "line",
                         data: [120, 132, 101, 134, 90, 230, 100],
-                        smooth:true
+                        smooth: true,
                     },
                 ],
-            };
+            },
+        };
+    },
+    methods: {
+        myEcharts() {
+            let _this = this;
+            var chartDom = this.$refs.user;
+            var myChart = this.$echarts.init(chartDom);
+            var option = _this.option;
 
             option && myChart.setOption(option);
             window.addEventListener("resize", function () {
                 myChart.resize();
             });
-            // setTimeout(function () {
-            //     window.onresize = function () {
-            //         myChart.resize();
-            //     };
-            // }, 200);
+        },
+        getData() {
+            let _this = this;
+            let option = _this.option;
+            let date = [];
+            let wordCounts = [];
+            adminMainApi.getAllRecentWeekWordsLearnCount().then((res) => {
+                if (res.data.code === 200) {
+                    let result = res.data.data;
+                    result.reverse();
+                    result.forEach((item) => {
+                        date.push(item.date.slice(5));
+                        wordCounts.push(item.count);
+                    });
+                    option.xAxis.data = date;
+                    option.series[0].data = wordCounts;
+                    _this.myEcharts();
+                }
+            });
         },
     },
     mounted() {
-        this.myEcharts();
+        this.getData();
     },
 };
 </script>

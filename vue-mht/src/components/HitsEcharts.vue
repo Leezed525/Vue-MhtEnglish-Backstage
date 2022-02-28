@@ -63,7 +63,6 @@ export default {
             let hitCounts = [];
             adminMainApi.getRecentWeekHitCount().then((res) => {
                 if (res.data.code === 200) {
-                    console.log(res);
                     let result = res.data.data;
                     result.reverse();
                     result.forEach((item) => {

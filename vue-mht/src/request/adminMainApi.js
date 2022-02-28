@@ -19,9 +19,16 @@ const getRecentWeekHitCount = data =>{
   });
 }
 
+const getAllRecentWeekWordsLearnCount = data =>{
+  return new request({
+    url: "/admin/system/getAllRecentWeekWordsLearnCount",
+  });
+}
+
 const adminMainApi = {
     getWordCount,
     getOnlineUserCount,
-    getRecentWeekHitCount
+    getRecentWeekHitCount,
+    getAllRecentWeekWordsLearnCount
 };
 export default adminMainApi;
