@@ -19,11 +19,11 @@
                                 <el-row style="height: 100%;" type="flex">
                                     <el-col :span="8" style="height: 100%;">
                                         <el-card class="card-item" :body-style="{height:'75%',weight:'100%'}">
-                                            <div slot="header">用户图表</div>
+                                            <div slot="header">用户动态</div>
                                             <user-echarts></user-echarts>
                                         </el-card>
                                         <el-card class="card-item" :body-style="{height:'75%',weight:'100%'}">
-                                            <div slot="header">用户地区分布</div>
+                                            <div slot="header">总用户</div>
                                             <region-echarts></region-echarts>
                                         </el-card>
                                     </el-col>

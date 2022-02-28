@@ -1,72 +1,95 @@
 <template>
     <div class="Echarts">
-        <div ref="region" style="width: 100%;height:100%;"></div>
+        <div ref="allUser" style="width: 100%;height:100%;"></div>
     </div>
 </template>
 
 <script>
+import adminMainApi from "@/request/adminMainApi";
 export default {
     data() {
-        return {};
-    },
-    methods: {
-        myEcharts() {
-            var chartDom = this.$refs.region;
-            var myChart = this.$echarts.init(chartDom);
-            var option;
-
-            option = {
+        return {
+            option: {
+                tooltip: {
+                    trigger: "axis",
+                },
                 legend: {
-                    top: "bottom",
+                    data: ["用户数", "活跃用户", "新增用户"],
+                },
+                grid: {
+                    left: "3%",
+                    right: "4%",
+                    bottom: "3%",
+                    containLabel: true,
                 },
                 toolbox: {
-                    show: true,
                     feature: {
-                        mark: { show: true },
-                        restore: { show: true },
-                        saveAsImage: { show: true },
+                        saveAsImage: {},
                     },
+                },
+                xAxis: {
+                    type: "category",
+                    boundaryGap: false,
+                    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                },
+                yAxis: {
+                    type: "value",
                 },
                 series: [
                     {
-                        name: "Nightingale Chart",
-                        type: "pie",
-                        radius: ['20%', '80%'],
-                        center: ["50%", "45%"],
-                        roseType: "area",
+                        name: "用户数",
+                        type: "line",
+                        data: [120, 132, 101, 134, 90, 230, 100],
                         itemStyle: {
-                            borderRadius: 8,
+                            color: "#fbce5a",
                         },
-                        data: [
-                            { value: 40, name: "rose 1" },
-                            { value: 38, name: "rose 2" },
-                            { value: 32, name: "rose 3" },
-                            { value: 30, name: "rose 4" },
-                        ],
                     },
                 ],
-            };
+            },
+        };
+    },
+    methods: {
+        myEcharts() {
+            let _this = this;
+            var chartDom = _this.$refs.allUser;
+            var myChart = _this.$echarts.init(chartDom);
+            let option = _this.option;
 
             option && myChart.setOption(option);
             window.addEventListener("resize", function () {
                 myChart.resize();
             });
-            // setTimeout(function () {
-            //     window.onresize = function () {
-            //         myChart.resize();
-            //     };
-            // }, 200);
+        },
+        getData() {
+            let _this = this;
+            let option = _this.option;
+            let date = [];
+
+            let allUserCount = [];
+            adminMainApi.getRecentWeekAllUserCount().then((res) => {
+                if (res.data.code === 200) {
+                    res.data.data.reverse();
+                    res.data.data.forEach((item) => {
+                        date.push(item.date.slice(5));
+                        allUserCount.push(item.count);
+                    });
+                    option.xAxis.data = date;
+                    option.series[0].data = allUserCount;
+                    _this.option = option;
+                    _this.myEcharts();
+                }
+            });
         },
     },
     mounted() {
-        this.myEcharts();
+        this.getData();
     },
 };
 </script>
 
 <style scoped>
 .Echarts {
-    height: 85%;
+    height: 100%;
     width: 100%;
 }
 </style>

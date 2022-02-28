@@ -3,32 +3,53 @@ import qs from "qs";
 
 const getWordCount = data => {
   return new request({
-    url: "/admin/system/getWordCount",
+    url: "/admin/system/getWordCount"
   });
 };
 
-const getOnlineUserCount = data =>{
+const getOnlineUserCount = data => {
   return new request({
-    url: "/admin/system/getOnlineUserCount",
+    url: "/admin/system/getOnlineUserCount"
   });
-}
+};
 
-const getRecentWeekHitCount = data =>{
+const getRecentWeekHitCount = data => {
   return new request({
-    url: "/admin/system/getRecentWeekHitCount",
+    url: "/admin/system/getRecentWeekHitCount"
   });
-}
+};
 
-const getAllRecentWeekWordsLearnCount = data =>{
+const getAllRecentWeekWordsLearnCount = data => {
   return new request({
-    url: "/admin/system/getAllRecentWeekWordsLearnCount",
+    url: "/admin/system/getAllRecentWeekWordsLearnCount"
   });
-}
+};
+
+const getRecentWeekNewUserCount = data => {
+  return new request({
+    url: "/admin/system/getRecentWeekNewUserCount"
+  });
+};
+
+const getRecentWeekActiveUserCount = data => {
+  return new request({
+    url: "/admin/system/getRecentWeekActiveUserCount"
+  });
+};
+
+const getRecentWeekAllUserCount = data => {
+  return new request({
+    url: "/admin/system/getRecentWeekAllUserCount"
+  });
+};
 
 const adminMainApi = {
-    getWordCount,
-    getOnlineUserCount,
-    getRecentWeekHitCount,
-    getAllRecentWeekWordsLearnCount
+  getWordCount,
+  getOnlineUserCount,
+  getRecentWeekHitCount,
+  getAllRecentWeekWordsLearnCount,
+  getRecentWeekNewUserCount,
+  getRecentWeekActiveUserCount,
+  getRecentWeekAllUserCount
 };
 export default adminMainApi;
