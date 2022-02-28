@@ -5,17 +5,12 @@
 </template>
 
 <script>
+import adminMainApi from "@/request/adminMainApi";
+var myChart;
 export default {
     data() {
-        return {};
-    },
-    methods: {
-        myEcharts() {
-            var chartDom = this.$refs.hits;
-            var myChart = this.$echarts.init(chartDom);
-            var option;
-
-            option = {
+        return {
+            option: {
                 tooltip: {
                     trigger: "axis",
                 },
@@ -26,7 +21,7 @@ export default {
                 },
                 xAxis: {
                     type: "category",
-                    data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Fri", "Fri"],
+                    // data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Fri", "Fri"],
                 },
                 yAxis: {
                     type: "value",
@@ -39,68 +34,51 @@ export default {
                 },
                 series: [
                     {
-                        data: [
-                            {
-                                value: 20,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                            {
-                                value: 150,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                            {
-                                value: 80,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                            {
-                                value: 100,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                            {
-                                value: 120,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                            {
-                                value: 130,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                            {
-                                value: 140,
-                                itemStyle: {
-                                    color: "#91cc75",
-                                },
-                            },
-                        ],
+                        // data: [20, 150, 80, 100, 120, 130, 140],
+                        itemStyle: {
+                            color: "#91cc75",
+                        },
                         type: "bar",
                     },
                 ],
-            };
-
+            },
+        };
+    },
+    methods: {
+        myEcharts() {
+            let _this = this;
+            var chartDom = _this.$refs.hits;
+            myChart = _this.$echarts.init(chartDom);
+            let option = _this.option;
+            _this.option = option;
             option && myChart.setOption(option);
             window.addEventListener("resize", function () {
                 myChart.resize();
             });
-            // setTimeout(function () {
-            //     window.onresize = function () {
-            //         myChart.resize();
-            //     };
-            // }, 200);
+        },
+        getRecentHitCount() {
+            let _this = this;
+            let option = _this.option;
+            let date = [];
+            let hitCounts = [];
+            adminMainApi.getRecentWeekHitCount().then((res) => {
+                if (res.data.code === 200) {
+                    console.log(res);
+                    let result = res.data.data;
+                    result.reverse();
+                    result.forEach((item) => {
+                        date.push(item.createDate.slice(5));
+                        hitCounts.push(item.count);
+                    });
+                    option.xAxis.data = date;
+                    option.series[0].data = hitCounts;
+                    _this.myEcharts()
+                }
+            });
         },
     },
     mounted() {
-        this.myEcharts();
+        this.getRecentHitCount();
     },
 };
 </script>

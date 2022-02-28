@@ -33,7 +33,7 @@
                                                 <el-card :body-style="{height:'50%'}" style="height: 95%;">
                                                     <div class="number-title" slot="header">用户在线人数</div>
                                                     <div class="number-content">
-                                                        123456
+                                                        {{onlineUsersCount}}
                                                     </div>
                                                 </el-card>
                                             </el-col>
@@ -41,7 +41,7 @@
                                                 <el-card :body-style="{height:'50%'}" style="height: 95%;">
                                                     <div class="number-title" slot="header">收录单词</div>
                                                     <div class="number-content">
-                                                        654231
+                                                        {{wordCount}}
                                                     </div>
                                                 </el-card>
                                             </el-col>
@@ -89,12 +89,17 @@ import UserEcharts from "../components/UserEcharts.vue";
 import RegionEcharts from "../components/RegionEcharts.vue";
 import WordCountEcharts from "../components/WordCountEcharts.vue";
 import HitsEcharts from "../components/HitsEcharts.vue";
+
+import adminMainApi from "@/request/adminMainApi";
+
 export default {
     components: { UserEcharts, RegionEcharts },
     data() {
         return {
             userInfo: {},
             nowDate: "", // 当前日期
+            wordCount: 1,
+            onlineUsersCount: 1,
         };
     },
     computed: {},
@@ -105,9 +110,11 @@ export default {
         HitsEcharts,
     },
     methods: {
+        //显示现在时间
         currentTime() {
             setInterval(this.formatDate, 500);
         },
+        //时间格式化
         formatDate() {
             let date = new Date();
             let year = date.getFullYear(); // 年
@@ -131,9 +138,37 @@ export default {
             second = second < 10 ? "0" + second : second; // 如果只有一位，则前面补零
             this.nowDate = `${year}年${month}月${day}日 ${hour}:${minute}:${second} ${weekArr[week]}`;
         },
+        //获得单词总数
+        getWordCount() {
+            let _this = this;
+            adminMainApi.getWordCount().then((res) => {
+                if (res.data.code === 200) {
+                    _this.wordCount = res.data.data;
+                    _this.wordCount = (
+                        Array(6).join(0) + _this.wordCount
+                    ).slice(-6);
+                }
+            });
+        },
+
+        //获取在线用户数
+        getOnlineUserCount() {
+            let _this = this;
+            adminMainApi.getOnlineUserCount().then((res) => {
+                if (res.data.code === 200) {
+                    _this.onlineUsersCount = res.data.data;
+                    _this.onlineUsersCount = (
+                        Array(6).join(0) + _this.onlineUsersCount
+                    ).slice(-6);
+                }
+            });
+        },
     },
     mounted() {
-        this.currentTime();
+        let _this = this;
+        _this.currentTime();
+        _this.getWordCount();
+        _this.getOnlineUserCount();
     },
     created() {
         let _this = this;
