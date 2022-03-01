@@ -51,7 +51,7 @@
                                                 <div>
                                                     <div style="float: left;">系统公告</div>
                                                     <div style="float: right;">
-                                                        <el-link>
+                                                        <el-link @click="toNotice">
                                                             管理公告
                                                             <i class="el-icon-arrow-right"></i>
                                                         </el-link>
@@ -59,7 +59,26 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                123
+                                                <el-table :data="NoticeList">
+                                                    <el-table-column property="title" label="标题" align="center"></el-table-column>
+                                                    <el-table-column fixed="right" label="操作" width="100">
+                                                        <template slot-scope="scope">
+                                                            <el-button @click="showNotice(scope.row)" type="text" size="small">查看</el-button>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                                <!-- 公告查看栏 -->
+                                                <el-dialog title="公告查看" :visible.sync="showNoticeVisible" append-to-body>
+                                                    <div style="height:50vh;overflow-Y: auto;">
+                                                        <div>
+                                                            <h1 class="notice-title">
+                                                                {{showingNotice.title}}
+                                                            </h1>
+                                                            <br />
+                                                        </div>
+                                                        <quill-editor ref="showingDialog" v-model="showingNotice.content" :options="showingOption"></quill-editor>
+                                                    </div>
+                                                </el-dialog>
                                             </div>
                                         </el-card>
                                     </el-col>
@@ -80,7 +99,6 @@
                 </el-card>
             </el-main>
         </el-container>
-
     </div>
 </template>
 
@@ -91,7 +109,7 @@ import WordCountEcharts from "../components/WordCountEcharts.vue";
 import HitsEcharts from "../components/HitsEcharts.vue";
 
 import adminMainApi from "@/request/adminMainApi";
-
+import adminNoticeApi from "@/request/adminNoticeApi";
 export default {
     components: { UserEcharts, RegionEcharts },
     data() {
@@ -100,6 +118,24 @@ export default {
             nowDate: "", // 当前日期
             wordCount: 1,
             onlineUsersCount: 1,
+            //公告数据
+            NoticeList: [],
+            // 公告内容显示栏
+            showNoticeVisible: false,
+            //查看编辑框设置
+            showingOption: {
+                modules: {
+                    toolbar: [],
+                },
+                theme: "snow",
+                // disabled:true,
+            },
+            //当前正在查看的公告
+            showingNotice: {
+                id: 0,
+                title: "",
+                content: "",
+            },
         };
     },
     computed: {},
@@ -163,6 +199,29 @@ export default {
                 }
             });
         },
+        //获取管理员公告
+        getNotice() {
+            let _this = this;
+            adminNoticeApi.getAdminNoticeById().then((res) => {
+                if (res.data.code === 200) {
+                    _this.NoticeList = res.data.data;
+                }
+            });
+        },
+        //显示公告
+        showNotice(data) {
+            let _this = this;
+            _this.showingNotice = data;
+            _this.showNoticeVisible = true;
+        },
+
+        toNotice() {
+            adminNoticeApi.toNotice().then((res) => {
+                if (res.data.code === 200) {
+                    this.$router.replace("/notice");
+                }
+            });
+        },
     },
     mounted() {
         let _this = this;
@@ -173,6 +232,7 @@ export default {
     created() {
         let _this = this;
         _this.userInfo = _this.$store.state.userInfo;
+        _this.getNotice();
     },
     beforeDestroy() {
         if (this.formatDate) {

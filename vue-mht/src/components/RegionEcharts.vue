@@ -14,7 +14,7 @@ export default {
                     trigger: "axis",
                 },
                 legend: {
-                    data: ["用户数", "活跃用户", "新增用户"],
+                    data: ["总用户数"],
                 },
                 grid: {
                     left: "3%",
@@ -37,7 +37,7 @@ export default {
                 },
                 series: [
                     {
-                        name: "用户数",
+                        name: "总用户数",
                         type: "line",
                         data: [120, 132, 101, 134, 90, 230, 100],
                         itemStyle: {

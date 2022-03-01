@@ -31,6 +31,8 @@ Vue.use(JsonViewer)
 // import * as echarts from 'echarts';
 Vue.prototype.$echarts = echarts
 
+Vue.config.devtools = false
+
 //引入字体
 import '@/assets/font/electronicFont.css';
 

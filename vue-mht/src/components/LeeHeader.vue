@@ -69,7 +69,7 @@
                     <quill-editor ref="showingDialog" v-model="showingNotice.content" :options="showingOption"></quill-editor>
                 </div>
                 <div slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="confirmNotice">我已确认</el-button>
+                    <el-button v-if="showingNotice.status === 0" type="primary" @click="confirmNotice">我已确认</el-button>
                 </div>
             </el-dialog>
         </el-dialog>
@@ -94,8 +94,8 @@ export default {
         };
         return {
             //websocketURL
-            // path: "wss://www.leezed525.top:8088/mhtEnglish/adminNoticeSocket/",
-            path: "ws://localhost:8080/mhtEnglish/adminNoticeSocket/",
+            path: "wss://www.leezed525.top:8088/mhtEnglish/adminNoticeSocket/",
+            // path: "ws://localhost:8080/mhtEnglish/adminNoticeSocket/",
             //头像地址
             avatar: require("@/assets/img/icon/icon6.png"),
             //修改密码弹窗框是否显示
@@ -175,14 +175,12 @@ export default {
     methods: {
         //修改密码弹出框打开
         changePassword() {
-            console.log("changePassword");
             let _this = this;
             _this.confirmPasswordFormVisable = true;
         },
         //发送请求去修改密码
         toChangePassword() {
             let _this = this;
-            console.log(_this);
             this.$refs["changePasswordForm"].validate((valid) => {
                 if (valid) {
                     let data = {
@@ -229,7 +227,7 @@ export default {
         getNotice() {
             let _this = this;
             adminNoticeApi.getAdminNoticeById().then((res) => {
-                console.log(res);
+                // console.log(res);
                 _this.NoticeList = res.data.data;
             });
         },
@@ -293,14 +291,14 @@ export default {
         },
         onOpen() {
             let _this = this;
-            console.log("WebSocket连接成功");
+            // console.log("WebSocket连接成功");
             _this.getNotice();
         },
         onError() {
-            console.log("连接出错");
+            // console.log("连接出错");
         },
         onClose() {
-            console.log("WebSocket关闭");
+            // console.log("WebSocket关闭");
         },
         getMessage(res) {
             let _this = this;

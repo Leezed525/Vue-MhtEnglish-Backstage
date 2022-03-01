@@ -24,7 +24,7 @@ service.interceptors.request.use(
       // 判断是否存在token，如果存在的话，则每个http header都加上token
       config.headers.AccessToken = store.state.token;
     }
-    console.log(config);
+    // console.log(config);
     return config;
   },
   error => {
@@ -36,7 +36,7 @@ service.interceptors.request.use(
 // http response 拦截器
 service.interceptors.response.use(
   response => {
-    console.log(response);
+    // console.log(response);
     let res = response.data;
     if (res.code === 401) {
       Vue.prototype.$message.error({
@@ -53,7 +53,7 @@ service.interceptors.response.use(
     return response;
   },
   error => {
-    console.log(error.response);
+    // console.log(error.response);
     if (error.response) {
       switch (error.response.status) {
         case 500:
